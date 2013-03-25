@@ -14,16 +14,6 @@ import org.powerbot.game.api.methods.widget.Bank;
 import org.powerbot.game.api.util.Random;
 import org.powerbot.game.api.wrappers.node.Item;
 
-
-/**
- * NEW PLAN ONCE PB IS UP:
- *  - Place superheat at a free space in ability bar.
- *  - Tap corresponding number key. -> Wait shortly
- *  - Click last Primary Ore
- *  - Rinse & Repeat.   
- */
-
-
 public class SpellCaster extends Node {
     
     @Override

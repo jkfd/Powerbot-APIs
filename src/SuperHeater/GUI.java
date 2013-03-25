@@ -16,10 +16,7 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-/**
- *
- * @author Sverre
- */
+
 public class GUI {
     private static GridLayout tabLayout   = new GridLayout(4, 2);
 
