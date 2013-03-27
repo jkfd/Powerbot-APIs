@@ -46,9 +46,12 @@ public class GUI {
                                                     );
                     final JComboBox<String> ores    = new JComboBox<String>(oreOpts);
 
+                    /**
+                     * REMOVED TO COMPLY WITH PB REQUIREMENTS. NO PIN!
+                     */
                     // PIN Entry
-                    JLabel pinL             = new JLabel("Enter Your Bank PIN:");
-                    final JTextField PIN    = new JTextField();
+                    // JLabel pinL             = new JLabel("Enter Your Bank PIN:");
+                    // final JTextField PIN    = new JTextField();
 
                     // Coalbag checkbox
                     JLabel cbL              = new JLabel("Use Coal Bag");
@@ -62,9 +65,12 @@ public class GUI {
                     settings.add(selOre);
                     settings.add(ores);
 
+                    /**
+                     * REMOVED TO COMPLY WITH PB REQUIREMENTS. NO PIN!
+                     */
                     // Row 2
-                    settings.add(pinL);
-                    settings.add(PIN);
+                    //settings.add(pinL);
+                    //settings.add(PIN);
 
                     // Row 4
                     settings.add(cbL);
@@ -115,7 +121,7 @@ public class GUI {
                 public void actionPerformed(ActionEvent e) {
                     // Add configuration
                     Consts.CONFIG.put("barType", ores.getSelectedItem().toString());
-                    Consts.CONFIG.put("PIN", PIN.getText());
+                  //Consts.CONFIG.put("PIN", PIN.getText());
                     Consts.CONFIG.put("abFrequency", Integer.toString(Saf.getValue()));
 
                     if(cbC.isSelected()) {
