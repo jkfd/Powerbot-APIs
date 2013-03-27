@@ -103,7 +103,6 @@ public class SuperHeater extends ActiveScript implements PaintListener
     public void onStart() {
         // Default Config Settings
         Consts.CONFIG.put("barType",   "Bronze");
-        Consts.CONFIG.put("PIN",       "0");
         Consts.CONFIG.put("retries",   "5");
         Consts.CONFIG.put("stopAction","nothing");
         Consts.CONFIG.put("abFrequency", "50");

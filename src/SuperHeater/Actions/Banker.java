@@ -49,15 +49,6 @@ public class Banker extends Node{
             Methods.getREE("Open Bank", i);
         }
 
-        // Check if we need to pin
-        for (int i = 0; PINPAD.isOnScreen() && i<retries; i++) {
-            Log.info("Pinning TRY: " + (i+1));
-            doPin();
-            Task.sleep(Random.nextInt(502, 739));
-
-            Methods.getREE("PIN", i);   // RETRY EXHAUSTION ERROR
-        }
-
         // Reset status after pin
         Consts.CURRENT_STATUS = "Banking";
 
@@ -161,38 +152,6 @@ public class Banker extends Node{
             return 0;
         }
         return 0;
-    }
-
-    private boolean doPin() {
-        String PIN = Consts.CONFIG.get("PIN");
-
-        // Set status
-        Consts.CURRENT_STATUS = "Pinning";
-
-        // If the pinpad is not visible, return false
-        if (!PINPAD.isOnScreen()) {
-            Log.severe("Pinpad not on screen");
-            return false;
-        }
-
-        // The PIN *MUST* be 4 characters long
-        if (PIN.length() != 4) {
-            Log.severe("NO PIN SET! Exiting script.");
-            Methods.stopSuperHeater();
-        }
-
-        // For each digit of the pin, search WChildren for matching text
-        for (int i=0; i < 4; i++) {
-            Widgets.get(13, 6 + Integer.parseInt(Character.toString(PIN.toCharArray()[i]))).interact("Select");
-            Task.sleep(Random.nextInt(367, 992));
-        }
-
-        // If the pinpad is still onscreen, we fucked up.
-        if(PINPAD.isOnScreen()) {
-            return false;
-        } else {
-            return true;
-        }
     }
 
     private boolean checkInvStatus(){
