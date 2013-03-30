@@ -1,25 +1,47 @@
 package SuperHeater.Misc;
 
+import SuperHeater.Misc.Logging.Log;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import javax.imageio.ImageIO;
+import org.powerbot.core.Bot;
 import org.powerbot.core.script.job.Task;
+import org.powerbot.game.api.methods.Environment;
 import org.powerbot.game.api.methods.Game;
 import org.powerbot.game.api.methods.Tabs;
 import org.powerbot.game.api.methods.tab.Inventory;
 import org.powerbot.game.api.methods.tab.Skills;
 import org.powerbot.game.api.methods.widget.Bank;
 import org.powerbot.game.api.util.Random;
+import org.powerbot.game.api.util.Time;
 import org.powerbot.game.api.wrappers.node.Item;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
-import org.powerbot.game.bot.Context;
 
 public class Methods {
     
     public static Image getBackgroundImage() throws Exception{
-        URL url = new URL("http://i.imgur.com/8IaeTV2.png");
+        URL url = new URL("https://i.minus.com/ipVXV3GYRqxyK.png");
         Image img = Toolkit.getDefaultToolkit().getImage(url);
         return img;
+    }
+    
+    /**
+     * Not working yet due to strange file permission errors.
+     * More to come
+     */
+    public static void saveScreenShot(){
+        try {
+            BufferedImage i = Environment.captureScreen();
+            File f = new File("savedScreenShot.png");
+            f.createNewFile();
+            ImageIO.write(i, "png", f);
+        } catch (IOException e) {
+            Log.error(e);
+        }
     }
     
     public static String getDistanceToTarget(){
@@ -167,6 +189,15 @@ public class Methods {
             Bank.close();
             Task.sleep(Random.nextInt(223, 882));
         }
+        
+        // Print info to console
+        System.out.println("\n\n---------------------------------");
+        Log.info("Ran for: " + Time.format(Consts.RUNTIME));
+        Log.info("Bars made this session: " + Consts.BARS_MADE);
+        Log.info("Bars / Hour:" + Methods.getBarsPerHour());
+        System.out.println("---------------------------------\n\n"
+                + "Thanks for using the script.\n"
+                + "Be sure to suggest features and report bugs!\n\n");
 
         // Logout on stop if told to.
         for (   int i = 0;
@@ -181,7 +212,7 @@ public class Methods {
         }
 
         Log.severe("Stopping Script");
-        Context.get().getScriptHandler().shutdown();
+        Bot.instance().getScriptHandler().shutdown();
 
     }
 }

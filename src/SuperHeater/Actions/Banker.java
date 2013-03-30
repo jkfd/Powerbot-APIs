@@ -1,7 +1,7 @@
 package SuperHeater.Actions;
 
 import SuperHeater.Misc.Consts;
-import SuperHeater.Misc.Log;
+import SuperHeater.Misc.Logging.Log;
 import SuperHeater.Misc.Methods;
 import org.powerbot.core.script.job.Task;
 import org.powerbot.core.script.job.state.Node;

@@ -126,6 +126,7 @@ public class GUI {
                     // Shortcut relevant hashMap entries
                     Consts.PRIMARY_ORE     = Consts.BARREQ.get(Consts.CONFIG.get("barType"))[0][0];
                     Consts.SECONDARY_ORE   = Consts.BARREQ.get(Consts.CONFIG.get("barType"))[1][0];
+                    Consts.BARID           = Consts.BARREQ.get(Consts.CONFIG.get("barType"))[2][0];
                     Consts.ACTIVE_ORE      = Consts.BARREQ.get(Consts.CONFIG.get("barType"));
 
                     // Start script and hide GUI

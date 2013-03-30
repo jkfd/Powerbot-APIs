@@ -4,14 +4,14 @@ import SuperHeater.Actions.Banker;
 import SuperHeater.Actions.SpellCaster;
 import SuperHeater.AntiBan.AntiBan;
 import SuperHeater.Misc.Consts;
+import SuperHeater.Misc.Logging.Log;
 import SuperHeater.Misc.Methods;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.powerbot.core.Bot;
 import org.powerbot.core.event.listeners.PaintListener;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.core.script.job.state.Node;
@@ -23,15 +23,14 @@ import org.powerbot.game.api.methods.tab.Skills;
 import org.powerbot.game.api.methods.widget.Bank;
 import org.powerbot.game.api.methods.widget.WidgetCache;
 import org.powerbot.game.api.util.Time;
-import org.powerbot.game.bot.Context;
 import org.powerbot.game.client.Client;
 
 
 @Manifest(  authors = { "jkfd" },
             name = "F2PSuperHeater",
             description = "Simply the best.",
-            version = 1.40,
-            website = "http://www.powerbot.org/community/topic/730515-beta-f2p-superheater/")
+            version = 1.41,
+            website = "https://www.powerbot.org/community/topic/964475-beta-f2p-superheater-free/")
 
 public class SuperHeater extends ActiveScript implements PaintListener
 {
@@ -40,7 +39,7 @@ public class SuperHeater extends ActiveScript implements PaintListener
         static Client client;
 
     /**
-     * This function draws the "paint" of the script
+     * Draws the "paint" of the script
      * @param g
      */
     @Override
@@ -50,7 +49,45 @@ public class SuperHeater extends ActiveScript implements PaintListener
 
         // Set up advanced Graphics
         Graphics2D g2d = (Graphics2D)g;
+        
+        // Draw Background
+        if (Consts.BGIMG != null) {
+            g2d.drawImage(Consts.BGIMG,0,390,null);
+        } else {
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.7f));
+            g2d.fillRoundRect(0, 390, 520, 235, 5, 5);
+        }
 
+        // Draw Info
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1.0f));
+        g2d.setColor(new Color(228, 202, 31));
+        g2d.drawString("Version: " + Consts.VERSION, 15, 415);
+        g2d.drawString("Making: " + Consts.CONFIG.get("barType") + " Bars", 15, 455);
+        g2d.drawString("Status: " + Consts.CURRENT_STATUS, 255, 455);
+        g2d.drawString("Ran for: "+ Time.format(Consts.RUNTIME), 15, 470);
+        g2d.drawString("Bars made this session: " + Consts.BARS_MADE, 15,485);
+        g2d.drawString("Remaining until target: " + (Methods.getDistanceToTarget()), 255,485);
+        g2d.drawString("Bars / Hour: " + Methods.getBarsPerHour(), 15,500);
+
+        g2d.drawString("Magic XP Gained: " + (Consts.BARS_MADE*53) + " xp", 15, 515);
+        g2d.drawString("Until Level "
+                + (Skills.getLevel(Skills.MAGIC)+1) + ": "
+                + Methods.getXpToNextLevel(Skills.MAGIC)
+                + "xp ("
+                + Methods.getBarsToNextLevel(Skills.MAGIC, 0)
+                + " Bars)", 255, 515);
+
+        g2d.drawString("Smithing XP Gained: "
+                    + Methods.getSmithingXp()
+                    + " xp", 15, 530);
+        g2d.drawString("Until Level "
+                + (Skills.getLevel(Skills.SMITHING)+1) + ": "
+                + Methods.getXpToNextLevel(Skills.SMITHING)
+                + "xp ("
+                + Methods.getBarsToNextLevel(Skills.SMITHING, 1)
+                + " Bars)", 255, 530);
+        
+        // Draw Mouse
         g2d.setColor(Color.RED);
         g2d.drawOval((Mouse.getX()-7), (Mouse.getY()-7), 14, 14);
 
@@ -58,42 +95,6 @@ public class SuperHeater extends ActiveScript implements PaintListener
         g2d.fillOval((Mouse.getX()-2), (Mouse.getY()-2), 4, 4);
 
         g2d.setColor(Color.BLUE);
-        
-        try {
-            g2d.drawImage(Methods.getBackgroundImage(),10,395,null);
-        } catch (Exception ex) {
-            Logger.getLogger(SuperHeater.class.getName()).log(Level.SEVERE, null, ex);
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.7f));
-            g2d.fillRoundRect(10, 395, 500, 130, 5, 5);
-        }
-
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1.0f));
-        g2d.setColor(new Color(228, 202, 31));
-        g2d.drawString("Version: " + Consts.VERSION, 15, 415);
-        g2d.drawString("Making: " + Consts.CONFIG.get("barType") + " Bars", 15, 450);
-        g2d.drawString("Status: " + Consts.CURRENT_STATUS, 255, 450);
-        g2d.drawString("Ran for: "+ Time.format(Consts.RUNTIME), 15, 465);
-        g2d.drawString("Bars made this session: " + Consts.BARS_MADE, 15,480);
-        g2d.drawString("Remaining until target: " + (Methods.getDistanceToTarget()), 255,480);
-        g2d.drawString("Bars / Hour: " + Methods.getBarsPerHour(), 15,495);
-
-        g2d.drawString("Magic XP Gained: " + (Consts.BARS_MADE*53) + " xp", 15, 510);
-        g2d.drawString("Until Level "
-                + (Skills.getLevel(Skills.MAGIC)+1) + ": "
-                + Methods.getXpToNextLevel(Skills.MAGIC)
-                + "xp ("
-                + Methods.getBarsToNextLevel(Skills.MAGIC, 0)
-                + " Bars)", 255, 510);
-
-        g2d.drawString("Smithing XP Gained: "
-                    + Methods.getSmithingXp()
-                    + " xp", 15, 525);
-        g2d.drawString("Until Level "
-                + (Skills.getLevel(Skills.SMITHING)+1) + ": "
-                + Methods.getXpToNextLevel(Skills.SMITHING)
-                + "xp ("
-                + Methods.getBarsToNextLevel(Skills.SMITHING, 1)
-                + " Bars)", 255, 525);
     }
 
     /**
@@ -106,6 +107,7 @@ public class SuperHeater extends ActiveScript implements PaintListener
         Consts.CONFIG.put("retries",   "5");
         Consts.CONFIG.put("stopAction","nothing");
         Consts.CONFIG.put("abFrequency", "50");
+        Consts.CONFIG.put("ABSlotInd", "0");
 
         // Define HashMaps
         Consts.BARREQ.put("Bronze",    new Integer[][] {{436,1}, {438,1},  {2349, 2350}});
@@ -125,6 +127,13 @@ public class SuperHeater extends ActiveScript implements PaintListener
         Consts.BARXP.put("Mithril",    new Double[] {53.0, 30.00});
         Consts.BARXP.put("Adamantite", new Double[] {53.0, 37.50});
         Consts.BARXP.put("Runite",     new Double[] {53.0, 50.00});
+        
+        // Get Background Image from server
+        try {
+            Consts.BGIMG = Methods.getBackgroundImage();
+        } catch (Exception e) {
+            Log.error("Error getting BG from Internet: " + e);
+        }
 
         // Are we in the bank? Do we need to bank?
         Consts.BANK_NOW = (Bank.isOpen() || Methods.checkNeedBank());
@@ -143,10 +152,10 @@ public class SuperHeater extends ActiveScript implements PaintListener
                 return 2500;
             }
 
-            if (client != Context.client()) {
+            if (client != Bot.client()) {
                 WidgetCache.purge();
-                Context.get().getEventManager().addListener(this);
-                client = Context.client();
+                Bot.instance().getEventManager().addListener(this);
+                client = Bot.client();
             }
 
             if (jobContainer != null) {
@@ -167,5 +176,10 @@ public class SuperHeater extends ActiveScript implements PaintListener
         }
         
         return 500;
+    }
+    
+    @Override
+    public void onStop(){
+        Methods.stopSuperHeater();
     }
 }

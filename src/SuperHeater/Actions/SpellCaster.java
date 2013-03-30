@@ -1,7 +1,7 @@
 package SuperHeater.Actions;
 
 import SuperHeater.Misc.Consts;
-import SuperHeater.Misc.Log;
+import SuperHeater.Misc.Logging.Log;
 import SuperHeater.Misc.Methods;
 import java.awt.event.KeyEvent;
 import org.powerbot.core.script.job.Task;
@@ -11,8 +11,11 @@ import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.methods.input.Keyboard;
 import org.powerbot.game.api.methods.tab.Inventory;
 import org.powerbot.game.api.methods.widget.Bank;
+import org.powerbot.game.api.util.Filter;
 import org.powerbot.game.api.util.Random;
 import org.powerbot.game.api.wrappers.node.Item;
+import sk.action.ActionBar;
+import sk.action.book.magic.Spell;
 
 public class SpellCaster extends Node {
     
@@ -23,6 +26,17 @@ public class SpellCaster extends Node {
 
     @Override
     public void execute() {
+        int ABIndex = Integer.parseInt(Consts.CONFIG.get("ABSlotInd"));
+        int startBarCount;
+        int t = 0;
+        int clickSleeper = Random.nextInt(50, 100);
+        Filter<Item> pOreFilter = new Filter<Item>() {
+
+            public boolean accept(Item t) {
+                return t.getId() == Consts.PRIMARY_ORE;
+            }
+        };
+        
         // Set Status
         Consts.CURRENT_STATUS = "Superheating";
 
@@ -44,43 +58,68 @@ public class SpellCaster extends Node {
             }
             
             // Open Action Bar if not visible.
-            // I don't like this solution. Check it.
+            // Uses Strikeskids API
             if (!Methods.waitForWidget(Widgets.get(640,70))) {
-                Widgets.get(640,3).interact("expand");          // We should possibly check the visibility of
-                Task.sleep(Random.nextInt(179, 230));           // Of this Wdg, but whenever the spell (70) is
-            }                                                   // invisible, this MUST be visible.
+                ActionBar.setExpanded(true);          
+                Task.sleep(Random.nextInt(179, 230));           
+            }
             
-            // Once the Action Bar is open, we tap the "1" key to select the spell.
+            // Check if the superheat spell is set in the action bar
+            // If not, set it.
+            if (ActionBar.getAbilityId(ABIndex) != Spell.SUPERHEAT_ITEM.getAbilityId()) {
+                ActionBar.dragToSlot(Consts.SUPERHEATABILITY,ABIndex);
+                Task.sleep(Random.nextInt(147, 259));
+            }
+            
+            // Once the Action Bar is open, we use the slot in which we stored the spell.
             if (Methods.waitForWidget(Widgets.get(640,70))) {
-                Keyboard.sendKey((char) KeyEvent.VK_1);
-                Task.sleep(Random.nextInt(59, 398));
+                
+                startBarCount = Inventory.getCount(Consts.BARID);   // Get the bar count before click
+                
+                while (Inventory.getCount(Consts.BARID) <= startBarCount && t <= 1500) {
+                    
+                    // Tap the ActionBar slot key
+                    Keyboard.sendKey((char) KeyEvent.VK_1);
+                    Task.sleep(Random.nextInt(19, 79));
 
-                // Cycle through inventory
-                for (Item item : Methods.reverseItemArray(Inventory.getItems())) {
-
-                    // If the item matches the primary ore, click it.
-                    if (item.getId() == Consts.PRIMARY_ORE) {
-                        item.getWidgetChild().click(true);
-                        incrementBars();
-                        Task.sleep(Random.nextInt(158, 282));
-                        return;
-                    }
+                   // Get array of all primary ores and click the last one
+                   Item[] primaryOres = Inventory.getItems(pOreFilter);
+                   primaryOres[primaryOres.length-1].getWidgetChild().click(true);
+                    
+                    // Wait before next click on same ore
+                    t += clickSleeper;
+                    Task.sleep(clickSleeper);
                 }
+                
+                // Increment the bar count, wait, and return out to start next ore.
+                incrementBars();
+                Task.sleep(clickSleeper);
+                return;
+                
             } else {
-                System.out.println("[ERROR] Can't see Action Bar. We are using the following widget: "
-                        + Widgets.get(640,70).getText());
-                System.out.println("Visible? " + Widgets.get(640,70).visible());
+                Log.error("Can't see Action Bar.");
             }
         }
     }
 
-    private void incrementBars() {
+    /**
+     * Increments the bar count by one if the number of bars have increased. 
+     * Uses a 1.5 second wait loop to account for lag.
+     * @param startCount: The bar count at before superheat is cast.
+     */
+    private void incrementBars(){
+        int t = 0;
+        
+        // Increase the global bar count
         Consts.BARS_MADE++;
-
+        
+        // Check if we have reached our target number of bars
+        // If we have, stop.
         if(Consts.BAR_TARGET > 0 && Consts.BARS_MADE == Consts.BAR_TARGET){
             Log.severe("Target number of bars reached!");
 
             Methods.stopSuperHeater();
         }
     }
+    
 }
