@@ -2,12 +2,9 @@ package SuperHeater.Misc;
 
 import SuperHeater.GrandExchange.GE;
 import SuperHeater.Misc.Logging.Log;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import javax.imageio.ImageIO;
 import org.powerbot.core.Bot;
 import org.powerbot.core.script.job.Task;
@@ -24,12 +21,6 @@ import org.powerbot.game.api.wrappers.node.Item;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 
 public class Methods {
-    
-    public static Image getBackgroundImage() throws Exception{
-        URL url = new URL("https://i.minus.com/ipVXV3GYRqxyK.png");
-        Image img = Toolkit.getDefaultToolkit().getImage(url);
-        return img;
-    }
     
     /**
      * Not working yet due to strange file permission errors.

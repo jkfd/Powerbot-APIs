@@ -1,4 +1,4 @@
-package SuperHeater;
+package SuperHeater.GUI;
 
 import SuperHeater.Misc.Consts;
 import java.awt.BorderLayout;

@@ -3,12 +3,11 @@ package SuperHeater;
 import SuperHeater.Actions.AntiBan;
 import SuperHeater.Actions.Banker;
 import SuperHeater.Actions.SpellCaster;
+import SuperHeater.GUI.GUI;
+import SuperHeater.GUI.Painter;
 import SuperHeater.GrandExchange.GE;
 import SuperHeater.Misc.Consts;
-import SuperHeater.Misc.Logging.Log;
 import SuperHeater.Misc.Methods;
-import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -19,18 +18,15 @@ import org.powerbot.core.script.job.state.Node;
 import org.powerbot.core.script.job.state.Tree;
 import org.powerbot.game.api.Manifest;
 import org.powerbot.game.api.methods.Game;
-import org.powerbot.game.api.methods.input.Mouse;
-import org.powerbot.game.api.methods.tab.Skills;
 import org.powerbot.game.api.methods.widget.Bank;
 import org.powerbot.game.api.methods.widget.WidgetCache;
-import org.powerbot.game.api.util.Time;
 import org.powerbot.game.client.Client;
 
 
 @Manifest(  authors = { "jkfd" },
             name = "F2PSuperHeater",
             description = "Simply the best.",
-            version = 1.50,
+            version = 1.51,
             website = "https://www.powerbot.org/community/topic/964475-beta-f2p-superheater-free/")
 
 public class SuperHeater extends ActiveScript implements PaintListener
@@ -40,62 +36,20 @@ public class SuperHeater extends ActiveScript implements PaintListener
         static Client client;
 
     /**
-     * Draws the "paint" of the script
+     * Draws the "paint" of the script and updates the time
      * @param g
      */
     @Override
     public void onRepaint(Graphics g) {
         // Update Time
         Consts.RUNTIME = System.currentTimeMillis() - Consts.START_TIME;
-
-        // Set up advanced Graphics
+        
+        // Set up advanced graphics 
         Graphics2D g2d = (Graphics2D)g;
         
-        // Draw Background
-        if (Consts.BGIMG != null) {
-            g2d.drawImage(Consts.BGIMG,0,390,null);
-        } else {
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.7f));
-            g2d.fillRoundRect(0, 390, 520, 235, 5, 5);
-        }
-
-        // Draw Info
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1.0f));
-        g2d.setColor(new Color(228, 202, 31));
-        g2d.drawString("Version: " + Consts.VERSION, 15, 415);
-        g2d.drawString("Making: " + Consts.CONFIG.get("barType") + " Bars", 15, 455);
-        g2d.drawString("Status: " + Consts.CURRENT_STATUS, 255, 455);
-        g2d.drawString("Ran for: "+ Time.format(Consts.RUNTIME), 15, 470);
-        g2d.drawString("Bars made this session: " + Consts.BARS_MADE, 15,485);
-        g2d.drawString("Remaining until target: " + (Methods.getDistanceToTarget()), 255,485);
-        g2d.drawString("Bars / Hour: " + Methods.getBarsPerHour(), 15,500);
-
-        g2d.drawString("Magic XP Gained: " + (Consts.BARS_MADE*53) + " xp", 15, 515);
-        g2d.drawString("Until Level "
-                + (Skills.getLevel(Skills.MAGIC)+1) + ": "
-                + Methods.getXpToNextLevel(Skills.MAGIC)
-                + "xp ("
-                + Methods.getBarsToNextLevel(Skills.MAGIC, 0)
-                + " Bars)", 255, 515);
-
-        g2d.drawString("Smithing XP Gained: "
-                    + Methods.getSmithingXp()
-                    + " xp", 15, 530);
-        g2d.drawString("Until Level "
-                + (Skills.getLevel(Skills.SMITHING)+1) + ": "
-                + Methods.getXpToNextLevel(Skills.SMITHING)
-                + "xp ("
-                + Methods.getBarsToNextLevel(Skills.SMITHING, 1)
-                + " Bars)", 255, 530);
-        
-        // Draw Mouse
-        g2d.setColor(Color.RED);
-        g2d.drawOval((Mouse.getX()-7), (Mouse.getY()-7), 14, 14);
-
-        g2d.setColor(Color.GREEN);
-        g2d.fillOval((Mouse.getX()-2), (Mouse.getY()-2), 4, 4);
-
-        g2d.setColor(Color.BLUE);
+        Painter.drawBackground(g2d);
+        Painter.drawOverview(g2d);
+        Painter.drawMouse(g2d);
     }
 
     /**
@@ -109,7 +63,7 @@ public class SuperHeater extends ActiveScript implements PaintListener
         Consts.CONFIG.put("stopAction","nothing");
         Consts.CONFIG.put("abFrequency", "50");
         Consts.CONFIG.put("ABSlotInd", "0");
-        Consts.CONFIG.put("sellBars", "TRUE");
+        Consts.CONFIG.put("sellBars", "FALSE");
         Consts.CONFIG.put("barPrice", "1000000");
 
         // Define HashMaps
@@ -133,13 +87,6 @@ public class SuperHeater extends ActiveScript implements PaintListener
         
         GE.SLOTS.put(1, new Integer[] {31, 32});
         GE.SLOTS.put(2, new Integer[] {47, 48});
-        
-        // Get Background Image from server
-        try {
-            Consts.BGIMG = Methods.getBackgroundImage();
-        } catch (Exception e) {
-            Log.error("Error getting BG from Internet: " + e);
-        }
 
         // Are we in the bank? Do we need to bank?
         Consts.BANK_NOW = (Bank.isOpen() || Methods.checkNeedBank());
