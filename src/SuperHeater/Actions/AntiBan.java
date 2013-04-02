@@ -1,4 +1,4 @@
-package SuperHeater.AntiBan;
+package SuperHeater.Actions;
 
 import SuperHeater.Misc.Consts;
 import SuperHeater.Misc.Logging.Log;
@@ -17,13 +17,12 @@ import org.powerbot.game.api.wrappers.widget.WidgetChild;
 
 
 public class AntiBan extends Node{
-    private int ABFREQ = getFrequency();
     
     // REGift = Random Event Gift.
     
     @Override
     public boolean activate() {
-        return (((Random.nextInt(0, ABFREQ) == 1) && !Consts.BANK_NOW && Consts.GO) || hasREGift());
+        return (((Random.nextInt(0, getFrequency()) == 1) && !Consts.BANK_NOW && Consts.GO) || hasREGift());
     }
     
     @Override
@@ -39,25 +38,25 @@ public class AntiBan extends Node{
 
         switch (r) {
             case 0:
-                // Set Status
                 Consts.CURRENT_STATUS = "ANTIBAN: Looking around";
+                Log.antiban("Looking Around");
                 lookAround();
                 break;
 
             case 1:
-                // Set Status
                 Consts.CURRENT_STATUS = "ANTIBAN: Checking Stats";
+                Log.antiban("Checking Stats...");
                 checkStats();
                 break;
 
             case 2:
-                // Set Status
                 Consts.CURRENT_STATUS = "ANTIBAN: Examining local players";
+                Log.antiban("Examining local players");
                 checkRandomPlayer();
                 break;
 
             default:
-                // Set Status
+                Log.antiban("ANTIBAN ERROR. Could not do antiban");
                 Consts.CURRENT_STATUS = "ANTIBAN: Tried, but couldn't do it";
                 break;
         }

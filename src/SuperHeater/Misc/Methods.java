@@ -1,5 +1,6 @@
 package SuperHeater.Misc;
 
+import SuperHeater.GrandExchange.GE;
 import SuperHeater.Misc.Logging.Log;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -13,6 +14,7 @@ import org.powerbot.core.script.job.Task;
 import org.powerbot.game.api.methods.Environment;
 import org.powerbot.game.api.methods.Game;
 import org.powerbot.game.api.methods.Tabs;
+import org.powerbot.game.api.methods.Widgets;
 import org.powerbot.game.api.methods.tab.Inventory;
 import org.powerbot.game.api.methods.tab.Skills;
 import org.powerbot.game.api.methods.widget.Bank;
@@ -35,6 +37,7 @@ public class Methods {
      */
     public static void saveScreenShot(){
         try {
+            Environment.getStorageDirectory();
             BufferedImage i = Environment.captureScreen();
             File f = new File("savedScreenShot.png");
             f.createNewFile();
@@ -176,19 +179,83 @@ public class Methods {
             stopSuperHeater();
         }
     }
+    
+    public static boolean withdrawBarsAsNotes(){
+        int retries = 3;
+        Log.info("Withdrawing all bars as notes");
+        
+        // Open Bank if not open
+        for (int i = 0; !Bank.isOpen() && !Widgets.get(759, 0).isOnScreen() && i<retries; i++) {
+            Bank.open();
+            Task.sleep(Random.nextInt(20, 472));
+
+            Methods.getREE("Open Bank", i);
+        }
+        
+        // Deposit all unnoted bars in our inventory
+        while (Inventory.getCount(Consts.BARID) > 0) {
+            Log.info("Depositing Excess Primary Ore.");
+            Bank.deposit(Consts.BARID, Bank.Amount.ALL);
+            Task.sleep(Random.nextInt(20, 472));
+        }
+        
+        // Find out how many bars we have
+        int totalBarCount = Bank.getItem(Consts.BARID).getWidgetChild().getChildStackSize();
+        
+        // Get all the bars as notes
+        Bank.setWithdrawNoted(true);
+        
+        // Try a max of 3 times to withdraw all bars while the 
+        // inventory count is less than the total bar count
+        for (int i=0; (Inventory.getCount(Consts.BARID+1) < totalBarCount) && i < 3; i++) {
+             Bank.withdraw(Consts.BARID, Bank.Amount.ALL);
+             Task.sleep(Random.nextInt(97, 424));
+        }
+        
+        Log.info("We have a total of: " + Inventory.getCount(Consts.BARID+1) + " Bars.");
+        Log.info("We should have: " + totalBarCount);
+        
+        if (!Bank.close()) {
+            Log.error("Could not close bank after withdrawing bars.");
+        }
+        
+        return (Inventory.getItem(Consts.BARID+1).getStackSize() >= totalBarCount);
+        
+    }
+    
+    public static boolean sellBars(int price){
+        int timer = 0;
+        int sellSleeper = Random.nextInt(1200, 2000);
+        
+        if (!withdrawBarsAsNotes()) {
+            Log.error("Could not withdraw any bars.");
+            return false;
+        }
+        
+        while (!GE.sell(Consts.BARID+1, Consts.CONFIG.get("barType").concat(" Bar"), price) && timer <= 4000) {
+            timer += sellSleeper;
+            Task.sleep(sellSleeper);
+        }
+        
+        GE.close();
+        
+        return true;
+    }
 
     public static void stopSuperHeater(){
-
+        
+        // If script has already been stopped once, return out.
+        if (Consts.STOPPED) {
+            return;
+        }
+        
+        Log.info("Stopping the script...");
+        
         // Set strategy determinants to false to prevent infinite loops
         Consts.GO       = false;
         Consts.BANK_NOW = false;
         Consts.SHOW_GUI = false;
-
-        // Close Bank if necessary
-        while (Bank.isOpen()) {
-            Bank.close();
-            Task.sleep(Random.nextInt(223, 882));
-        }
+        Consts.STOPPED  = true;
         
         // Print info to console
         System.out.println("\n\n---------------------------------");
@@ -198,6 +265,22 @@ public class Methods {
         System.out.println("---------------------------------\n\n"
                 + "Thanks for using the script.\n"
                 + "Be sure to suggest features and report bugs!\n\n");
+        
+        // Sell bars if asked to
+        if (Consts.CONFIG.get("sellBars").equals("TRUE")) {
+            Log.info("Selling Bars as requested");
+            int price = Integer.decode(Consts.CONFIG.get("barPrice").toString());
+            sellBars(price);
+        }
+        
+        Log.info("Bars sold.");
+        
+        // Close Bank if necessary
+        while (Bank.isOpen()) {
+            Log.info("Closing bank");
+            Bank.close();
+            Task.sleep(Random.nextInt(223, 882));
+        }
 
         // Logout on stop if told to.
         for (   int i = 0;
@@ -210,8 +293,8 @@ public class Methods {
             Game.logout(false);
             Task.sleep(Random.nextInt(579, 1235));
         }
-
-        Log.severe("Stopping Script");
+        
+        Log.severe("Shutting down. Bye-bye");
         Bot.instance().getScriptHandler().shutdown();
 
     }

@@ -1,8 +1,9 @@
 package SuperHeater;
 
+import SuperHeater.Actions.AntiBan;
 import SuperHeater.Actions.Banker;
 import SuperHeater.Actions.SpellCaster;
-import SuperHeater.AntiBan.AntiBan;
+import SuperHeater.GrandExchange.GE;
 import SuperHeater.Misc.Consts;
 import SuperHeater.Misc.Logging.Log;
 import SuperHeater.Misc.Methods;
@@ -29,7 +30,7 @@ import org.powerbot.game.client.Client;
 @Manifest(  authors = { "jkfd" },
             name = "F2PSuperHeater",
             description = "Simply the best.",
-            version = 1.41,
+            version = 1.50,
             website = "https://www.powerbot.org/community/topic/964475-beta-f2p-superheater-free/")
 
 public class SuperHeater extends ActiveScript implements PaintListener
@@ -108,6 +109,8 @@ public class SuperHeater extends ActiveScript implements PaintListener
         Consts.CONFIG.put("stopAction","nothing");
         Consts.CONFIG.put("abFrequency", "50");
         Consts.CONFIG.put("ABSlotInd", "0");
+        Consts.CONFIG.put("sellBars", "TRUE");
+        Consts.CONFIG.put("barPrice", "1000000");
 
         // Define HashMaps
         Consts.BARREQ.put("Bronze",    new Integer[][] {{436,1}, {438,1},  {2349, 2350}});
@@ -127,6 +130,9 @@ public class SuperHeater extends ActiveScript implements PaintListener
         Consts.BARXP.put("Mithril",    new Double[] {53.0, 30.00});
         Consts.BARXP.put("Adamantite", new Double[] {53.0, 37.50});
         Consts.BARXP.put("Runite",     new Double[] {53.0, 50.00});
+        
+        GE.SLOTS.put(1, new Integer[] {31, 32});
+        GE.SLOTS.put(2, new Integer[] {47, 48});
         
         // Get Background Image from server
         try {
@@ -174,7 +180,6 @@ public class SuperHeater extends ActiveScript implements PaintListener
                 jobContainer = new Tree(jobs.toArray(new Node[jobs.size()]));
             }
         }
-        
         return 500;
     }
     

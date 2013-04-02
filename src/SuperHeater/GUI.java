@@ -94,12 +94,27 @@ public class GUI {
                 target.add(Cta);
                 target.add(Lte);
                 target.add(Tte);
+                
+            // Add GE panel to TabbedPane
+                JPanel GE = new JPanel();
+                GE.setLayout(tabLayout);
+                
+                JLabel Lge = new JLabel("Sell Bars on Finish?");
+                JLabel Lpr = new JLabel("Price:");
+                final JCheckBox Cge = new JCheckBox();
+                final JTextField Tpr = new JTextField();
+                
+                GE.add(Lge);
+                GE.add(Cge);
+                GE.add(Lpr);
+                GE.add(Tpr);
 
 
             // Add panels to Tabbed panes
             settingTab.addTab("Settings", settings);
             settingTab.addTab("Antiban", antiban);
             settingTab.addTab("Targets", target);
+            settingTab.addTab("GrandExchange", GE);
 
             // Go Button
             JButton go = new JButton("Start Script");
@@ -109,18 +124,23 @@ public class GUI {
                     Consts.CONFIG.put("barType", ores.getSelectedItem().toString());
                     Consts.CONFIG.put("abFrequency", Integer.toString(Saf.getValue()));
 
-                    if(cbC.isSelected()) {
+                    if (cbC.isSelected()) {
                         Consts.CONFIG.put("useCB", "TRUE");
                     }
 
-                    if(logout.isSelected()) {
+                    if (logout.isSelected()) {
                         Consts.CONFIG.put("stopAction", "logout");
                     }
 
-                    if(Cta.isSelected() && Tte.getText().length() > 0){
+                    if (Cta.isSelected() && Tte.getText().length() > 0){
                         Consts.CONFIG.put("barTargetEnabled", "True");
                         Consts.CONFIG.put("barTarget", Tte.getText());
                         Consts.BAR_TARGET  = Integer.parseInt(Consts.CONFIG.get("barTarget"));
+                    }
+                    
+                    if (Cge.isSelected() && Tpr.getText().length() > 0) {
+                        Consts.CONFIG.put("sellBars", "TRUE");
+                        Consts.CONFIG.put("barPrice", Tpr.getText());
                     }
 
                     // Shortcut relevant hashMap entries

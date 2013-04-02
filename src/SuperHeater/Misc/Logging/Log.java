@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Log {
-    public static List<Entry> completeLog = new ArrayList<Entry>();
+    private static List<Entry> completeLog = new ArrayList<Entry>();
     
     public static void severe(Object o){
         addToLog("severe", o, true);
@@ -21,6 +21,10 @@ public class Log {
         addToLog("error", o, true);
     }
     
+    public static void antiban(Object o){
+        addToLog("antiban", o, true);
+    }
+    
     public static String getTimestamp(String format, Date d){
         
         if (d == null) {
@@ -32,15 +36,31 @@ public class Log {
         return ("[" + f.format(d) + "]");
     }
     
+    public static List<Entry> getEntriesByType(String type){
+        List <Entry> results = new ArrayList<Entry>();
+        
+        for (Entry e : completeLog) {
+            if (e.getType().equals(type.toUpperCase())) {
+                results.add(e);
+            }
+        }
+        
+        return results;
+    }
+    
+    public static void printToConsole(Entry logEntry) {
+        System.out.println(
+            getTimestamp("HH:mm:ss", logEntry.getTime())
+            + "[" + logEntry.getType() + "] "
+            + logEntry.getMessage());
+    }
+    
     private static void addToLog(String type, Object o, boolean printToConsole){
         Entry logEntry = new Entry(new Date(), type, o);
         completeLog.add(logEntry);
         
         if (printToConsole) {
-            System.out.println(
-                    getTimestamp("HH:mm:ss", logEntry.getTime())
-                    + "[" + logEntry.getType() + "] "
-                    + logEntry.getMessage());
+            printToConsole(logEntry);
         }
     }
 }

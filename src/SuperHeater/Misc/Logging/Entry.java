@@ -5,9 +5,9 @@ import java.util.Date;
 
 public class Entry {
     
-    private static Date time;
-    private static String type;
-    private static Object message;
+    private Date time;
+    private String type;
+    private Object message;
     
     public Entry(Date tm, String ty, Object o){
         time        = tm;
@@ -16,14 +16,14 @@ public class Entry {
     }
     
     public Date getTime(){
-        return time;
+        return this.time;
     }
     
     public String getType(){
-        return type;
+        return this.type;
     }
     
     public Object getMessage(){
-        return message;
+        return this.message;
     }
 }

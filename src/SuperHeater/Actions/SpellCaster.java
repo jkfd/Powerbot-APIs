@@ -108,7 +108,6 @@ public class SpellCaster extends Node {
      * @param startCount: The bar count at before superheat is cast.
      */
     private void incrementBars(){
-        int t = 0;
         
         // Increase the global bar count
         Consts.BARS_MADE++;

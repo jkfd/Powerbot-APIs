@@ -365,21 +365,21 @@ public class Banker extends Node{
         }
     }
     
-   private void getCB(){
-       // Do not get if we're not supposed to be using it.
-       if (!Consts.CONFIG.get("useCB").equals("TRUE") || Consts.SECONDARY_ORE != 453) {
-           return;
-       }
-       
-       // Do not get if we already have.
-       if (Inventory.getCount(Consts.COAL_BAG) > 0) {
-           return;
-       }
-       
-       // Actually withdraw coal bag.
-       for (int i=0; (Inventory.getCount(18339) < 1) && i < 3; i++) {
-            Bank.withdraw(18339, 0);
-            Task.sleep(Random.nextInt(97, 424));
+    private void getCB(){
+        // Do not get if we're not supposed to be using it.
+        if (!Consts.CONFIG.get("useCB").equals("TRUE") || Consts.SECONDARY_ORE != 453) {
+            return;
         }
-   }
+
+        // Do not get if we already have.
+        if (Inventory.getCount(Consts.COAL_BAG) > 0) {
+            return;
+        }
+
+        // Actually withdraw coal bag.
+        for (int i=0; (Inventory.getCount(18339) < 1) && i < 3; i++) {
+             Bank.withdraw(18339, 0);
+             Task.sleep(Random.nextInt(97, 424));
+        }
+    }
 }
