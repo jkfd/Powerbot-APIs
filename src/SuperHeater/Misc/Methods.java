@@ -262,9 +262,8 @@ public class Methods {
             Log.info("Selling Bars as requested");
             int price = Integer.decode(Consts.CONFIG.get("barPrice").toString());
             sellBars(price);
+            Log.info("Bars sold.");
         }
-        
-        Log.info("Bars sold.");
         
         // Close Bank if necessary
         while (Bank.isOpen()) {

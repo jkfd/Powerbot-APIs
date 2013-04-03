@@ -6,20 +6,75 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 
 
 public class GUI {
     private static GridLayout tabLayout   = new GridLayout(4, 2);
+    public static Map<String, Button> buttons = new HashMap<String, Button>();
+    
+    /**
+     * Function is called in onStart() and should include everything that
+     * needs to be to the GUI done before the script commences.
+     */
+    public static void init(){
+        // Initialize buttons in hashmap
+        buttons.put("show", new Button(
+                "https://i.minus.com/ixQDSw2wJUuee.png", "Show Paint",
+                42, 42, 470, 390, false, ClickAction.ACTION_SHOW, false));
+        
+        buttons.put("hide", new Button(
+                "https://i.minus.com/ib1muD0YQfFNCD.png", "Hide Paint", 
+                42, 42, 470, 390, true, ClickAction.ACTION_HIDE, true));
+        
+        buttons.put("bug", new Button(
+                "https://i.minus.com/iM40j1pOQoZhT.png", "Report Bug", 
+                42, 42, 425, 390, true, ClickAction.ACTION_BUG, true));
+    }
+    
+    /**
+     * Shows a popup window capable of showing large amounts of text through 
+     * a JTextArea();
+     * @param title String printed in the Popup titlebar
+     * @param s String information to be displayed in the JTextArea.
+     */
+    public static void showTextPopup(String title, String s){
+        JFrame f = new JFrame(title);
+        JTextArea ta = new JTextArea();
+        JPanel p = new JPanel();
+        
+        ta.setText(s);
+        ta.setColumns(50);
+        ta.setRows(10);
+        ta.setLineWrap(true);
+        ta.setWrapStyleWord(true);
+        
+        JScrollPane sp = new JScrollPane(ta);
+        sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        
+        p.add(sp);
+        f.add(p);
+        f.setSize(450, 220);
+        f.setVisible(true);
+    }
 
+    /**
+     * Creates the GUI window where the user selects configuration
+     * options for the script. Should be phased out before V. 1.60
+     */
     public static void createWindow(){
         // Configure MainFrame
         final JFrame main = new JFrame ("F2P SuperHeater");

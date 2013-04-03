@@ -3,13 +3,17 @@ package SuperHeater;
 import SuperHeater.Actions.AntiBan;
 import SuperHeater.Actions.Banker;
 import SuperHeater.Actions.SpellCaster;
+import SuperHeater.GUI.Button;
 import SuperHeater.GUI.GUI;
 import SuperHeater.GUI.Painter;
 import SuperHeater.GrandExchange.GE;
 import SuperHeater.Misc.Consts;
+import SuperHeater.Misc.Logging.Log;
 import SuperHeater.Misc.Methods;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import org.powerbot.core.Bot;
 import org.powerbot.core.event.listeners.PaintListener;
@@ -26,10 +30,10 @@ import org.powerbot.game.client.Client;
 @Manifest(  authors = { "jkfd" },
             name = "F2PSuperHeater",
             description = "Simply the best.",
-            version = 1.51,
+            version = 1.53,
             website = "https://www.powerbot.org/community/topic/964475-beta-f2p-superheater-free/")
 
-public class SuperHeater extends ActiveScript implements PaintListener
+public class SuperHeater extends ActiveScript implements PaintListener, MouseListener
 {
     	public static Tree jobContainer = null;
         public static ArrayList<Node> jobs = new ArrayList<Node>();
@@ -47,16 +51,21 @@ public class SuperHeater extends ActiveScript implements PaintListener
         // Set up advanced graphics 
         Graphics2D g2d = (Graphics2D)g;
         
-        Painter.drawBackground(g2d);
-        Painter.drawOverview(g2d);
+        if (Consts.SHOW_PAINT) {
+            Painter.drawBackground(g2d);
+            Painter.drawOverview(g2d);
+        }
+        
+        Painter.drawMenu(g2d);
+        Painter.drawButtons(g2d);
         Painter.drawMouse(g2d);
     }
 
-    /**
-     *
-     */
+
     @Override
     public void onStart() {
+        GUI.init();
+        
         // Default Config Settings
         Consts.CONFIG.put("barType",   "Bronze");
         Consts.CONFIG.put("retries",   "5");
@@ -133,5 +142,60 @@ public class SuperHeater extends ActiveScript implements PaintListener
     @Override
     public void onStop(){
         Methods.stopSuperHeater();
+    }
+
+    public void mouseClicked(final MouseEvent e) {
+        for (String k : GUI.buttons.keySet()) {
+            
+            Button but = GUI.buttons.get(k);
+            
+            if (but.collides(e)) {
+                switch (but.getClickAction()) {
+                    case 0:
+                        // Switch hide button for show button when GUI no longer visible
+                        Consts.SHOW_PAINT = false;
+                        but.setEnabled(false);
+                        but.setVisible(false);
+                        GUI.buttons.get("show").setEnabled(true);
+                        GUI.buttons.get("show").setVisible(true);
+                        break;
+                    case 1:
+                        // Switch show button for hide button when GUI is visible
+                        Consts.SHOW_PAINT = true;
+                        but.setEnabled(false);
+                        but.setVisible(false);
+                        GUI.buttons.get("hide").setEnabled(true);
+                        GUI.buttons.get("hide").setVisible(true);
+                        break;
+                    case 2:
+                        // Make a display a popup with instructions and console output
+                        GUI.showTextPopup(
+                                "Paste this into your post when reporting a bug", 
+                                Log.dumpLog());
+                        break;
+                    default:
+                        Log.error("Some error occured getting the clickAction of button");
+                        break;
+                }
+                
+                return;
+            }
+        }
+    }
+
+    public void mousePressed(final MouseEvent e) {
+        Painter.setMousePressed(true);
+    }
+
+    public void mouseReleased(final MouseEvent e) {
+        Painter.setMousePressed(false);
+    }
+
+    public void mouseEntered(final MouseEvent e) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void mouseExited(final MouseEvent e) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

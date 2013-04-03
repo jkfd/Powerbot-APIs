@@ -25,6 +25,12 @@ public class Log {
         addToLog("antiban", o, true);
     }
     
+    /**
+     * Returns a time in the format specified in @param format.
+     * @param format The format of the time to be displayed (HH:mm:ss);
+     * @param d The Date object to be formated.
+     * @return 
+     */
     public static String getTimestamp(String format, Date d){
         
         if (d == null) {
@@ -36,6 +42,11 @@ public class Log {
         return ("[" + f.format(d) + "]");
     }
     
+    /**
+     * Returns only log entries with a type that matches the argument.
+     * @param type
+     * @return 
+     */
     public static List<Entry> getEntriesByType(String type){
         List <Entry> results = new ArrayList<Entry>();
         
@@ -48,19 +59,32 @@ public class Log {
         return results;
     }
     
-    public static void printToConsole(Entry logEntry) {
-        System.out.println(
-            getTimestamp("HH:mm:ss", logEntry.getTime())
-            + "[" + logEntry.getType() + "] "
-            + logEntry.getMessage());
+    /**
+     * Gives a String type list of entries separated by a 
+     * newline character regardless of type or time.
+     * @return 
+     */
+    public static String dumpLog(){
+        String result = "------- LOG DUMP: -------\n";
+        
+        for (Entry e : completeLog) {
+            result = result.concat(e.stringEntry().concat(System.lineSeparator()));
+        }
+        
+        return result;
     }
     
+    /**
+     * Adds an object to the completeLog list as a Log.Entry and prints it to
+     * the console as a string if asked to.
+     * @param type Type of log entry (info, severe, error, etc.)
+     * @param o The object that makes up the main message part of the log entry.
+     * @param printToConsole Prints log entry to console if TRUE
+     */
     private static void addToLog(String type, Object o, boolean printToConsole){
         Entry logEntry = new Entry(new Date(), type, o);
         completeLog.add(logEntry);
         
-        if (printToConsole) {
-            printToConsole(logEntry);
-        }
+        System.out.println(logEntry.stringEntry());
     }
 }

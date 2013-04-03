@@ -26,4 +26,11 @@ public class Entry {
     public Object getMessage(){
         return this.message;
     }
+    
+    public String stringEntry() {
+        return(
+            Log.getTimestamp("HH:mm:ss", this.getTime())
+            + "[" + this.getType() + "] "
+            + this.getMessage());
+    }
 }
