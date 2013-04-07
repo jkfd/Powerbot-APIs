@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
+import java.util.Map;
 import org.powerbot.game.api.methods.input.Mouse;
 import org.powerbot.game.api.methods.tab.Skills;
 import org.powerbot.game.api.util.Time;
@@ -57,25 +58,25 @@ public class Painter {
         g2d.drawString("Ran for: "+ Time.format(Consts.RUNTIME), 70, 470);
         g2d.drawString("Bars made this session: " + Consts.BARS_MADE, 70,485);
         g2d.drawString("Remaining until target: " + (Methods.getDistanceToTarget()), 255,485);
-        g2d.drawString("Bars / Hour: " + Methods.getBarsPerHour(), 70,500);
-
-        g2d.drawString("Magic XP Gained: " + (Consts.BARS_MADE*53) + " xp", 70, 515);
+        g2d.drawString("Magic XP Gained: " + (Consts.BARS_MADE*53) + " xp", 70, 500);
         g2d.drawString("Until Level "
                 + (Skills.getLevel(Skills.MAGIC)+1) + ": "
                 + Methods.getXpToNextLevel(Skills.MAGIC)
                 + "xp ("
                 + Methods.getBarsToNextLevel(Skills.MAGIC, 0)
-                + " Bars)", 255, 515);
+                + " Bars)", 255, 500);
 
         g2d.drawString("Smithing XP Gained: "
                     + Methods.getSmithingXp()
-                    + " xp", 70, 530);
+                    + " xp", 70, 515);
         g2d.drawString("Until Level "
                 + (Skills.getLevel(Skills.SMITHING)+1) + ": "
                 + Methods.getXpToNextLevel(Skills.SMITHING)
                 + "xp ("
                 + Methods.getBarsToNextLevel(Skills.SMITHING, 1)
-                + " Bars)", 255, 530);
+                + " Bars)", 255, 515);
+        
+        g2d.drawString("Bars / Hour: " + Methods.getBarsPerHour(), 70,530);
     }
     
     /**
@@ -97,13 +98,14 @@ public class Painter {
     }
     
     /**
-     * Draws all buttons stored in the GUI.buttonList
-     * @param g2d 
+     * Draws all buttons in the specified HashMap
+     * @param g2d Graphics component
+     * @param buttons HashMap containing buttons. Key is the name of the button.
      */
-    public static void drawButtons(Graphics2D g2d){
-        for (String k : GUI.buttons.keySet()) {
+    public static void drawButtons(Graphics2D g2d, Map<String, Button> buttons){
+        for (String k : buttons.keySet()) {
             
-            Button b = GUI.buttons.get(k);
+            Button b = buttons.get(k);
             
             if (b.getIcon() == null) {
                 g2d.setColor(Color.red);
@@ -131,6 +133,45 @@ public class Painter {
         }
         
         g2d.drawImage(MENUBG, 383, 390, null);
+    }
+    
+    /**
+     * Draws all visible tabs. Tabs themselves are transparent
+     * but contain a set of components and related draw functions
+     * these are drawn in their respective places. The tab itself
+     * is never a visible entity, just a collection of components.
+     * @param g2d Graphics component
+     */
+    public static void drawTabs(Graphics2D g2d){
+        Tab t = GUI.getCurrentTab();
+
+        if (t.getName().equals("Overview")) {
+            drawOverview(g2d);
+        } else if (t.getName().equals("Settings")) {
+            g2d.setColor(new Color(228, 202, 31));
+            g2d.drawString("SETTINGS", 50, 425);
+            g2d.drawString("Use Coal Bag?", 50, 460);
+            g2d.drawString("Use Target?", 50.0f, 487.5f);
+            g2d.drawString("Select the bar to make:", 50, 515);
+            g2d.drawString("Logout on Exit?", 195, 460);
+            g2d.drawString("Sell Bars on GE?", 365, 460);
+        }
+
+        for (Component c : t.getComponents()) {
+            if (c.visible) {
+                g2d.drawImage(c.getIcon(), c.getX(), c.getY(), null);
+                
+                if (c instanceof TextField) {
+                    TextField tf = (TextField) c;
+                    g2d.drawString(tf.getValue().concat(tf.getAmmendment()), tf.getX()+10, tf.getY()+20);
+                }
+            }
+            
+            if (c.isSelected()) {
+                g2d.setColor(Color.YELLOW);
+                g2d.drawRect(c.getX(), c.getY(), c.getWidth(), c.getHeight());
+            }
+        }
     }
     
     /**

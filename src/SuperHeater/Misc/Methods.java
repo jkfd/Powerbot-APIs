@@ -39,7 +39,7 @@ public class Methods {
     }
     
     public static String getDistanceToTarget(){
-        if (Consts.BAR_TARGET > 0) {
+        if (Consts.BAR_TARGET > 0 && "TRUE".equals(Consts.CONFIG.get("barTargetEnabled"))) {
             return Integer.toString(Consts.BAR_TARGET-Consts.BARS_MADE);
         } else {
             return "N/A";
