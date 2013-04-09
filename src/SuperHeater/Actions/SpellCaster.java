@@ -21,7 +21,11 @@ public class SpellCaster extends Node {
     
     @Override
     public boolean activate() {
-        return (Consts.BANK_NOW == false && Consts.GO == true);
+        return (Consts.BANK_NOW == false && 
+                Consts.GO == true &&
+                Inventory.getCount(Consts.PRIMARY_ORE) > 0
+                && Inventory.getCount(Consts.NATURE_RUNE) > 0
+                && Inventory.getCount(Consts.SECONDARY_ORE) >= Consts.ACTIVE_ORE[1][1]);
     }
 
     @Override
@@ -70,30 +74,17 @@ public class SpellCaster extends Node {
             
             // Once the Action Bar is open, we use the slot in which we stored the spell.
             if (Methods.waitForWidget(Widgets.get(640,70))) {
-                
-                while (Inventory.getCount(Consts.PRIMARY_ORE) > 0
-                        && Inventory.getCount(Consts.NATURE_RUNE) > 0
-                        && Inventory.getCount(Consts.SECONDARY_ORE) >= Consts.ACTIVE_ORE[1][1]) {
                     
-                    // Tap the ActionBar slot key
-                    Keyboard.sendKey((char) KeyEvent.VK_1);
-                    Task.sleep(Random.nextInt(19, 79));
+                // Tap the ActionBar slot key
+                Keyboard.sendKey((char) KeyEvent.VK_1);
+                Task.sleep(Random.nextInt(19, 79));
 
-                    // Get array of all primary ores and click the last one
-                    Item[] primaryOres = Inventory.getItems(pOreFilter);
-                    primaryOres[primaryOres.length-1].getWidgetChild().click(true);
-                    
-                    // Sleep shortly to limit clicking
-                    // Keeping in mind that Superheat takes 2 "clics" (1200 sec)
-                    // We wait for 1/2 to 1 "clic".
-                    Task.sleep(300, 600);
-                    
-                    // Increment the bar count after because the incrementer relies on
-                    // counting actual bars. These will not show up before the wait is
-                    // over, and MAY not show up after. In this case, we verify the 
-                    // bar count when depositing. 
-                    incrementBars();
-                }
+                // Get array of all primary ores and click the last one
+                Item[] primaryOres = Inventory.getItems(pOreFilter);
+                primaryOres[primaryOres.length-1].getWidgetChild().click(true);
+                
+                // Increment the bars.
+                incrementBars();
                 
             } else {
                 Log.error("Can't see Action Bar.");

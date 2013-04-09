@@ -24,21 +24,36 @@ public class AntiBan extends Node{
     public boolean activate() {
         //return (((Random.nextInt(0, getFrequency()) == 1) && !Consts.BANK_NOW && Consts.GO) || hasREGift());
         //return (((1 == 1) && !Consts.BANK_NOW && Consts.GO) || hasREGift());
-        int rand = Random.nextInt(0, 50);
+        int rand = Random.nextInt(0, 150);
         
+        // If we ARE banking, no antiban
         if (Consts.BANK_NOW == true) {
-            Log.antiban("BANK NOW: " + Consts.BANK_NOW);
             return false;
         }
         
+        // If we're SUPPOSED to be banking, no AB (Or we'll get stuck)
+        if (Methods.checkNeedBank() == true) {
+            Consts.BANK_NOW = Methods.checkNeedBank();
+            return false;
+        }
+        
+        // If we're paused, no AB
         if (Consts.GO == false) {
-            Log.antiban("GO: " + Consts.GO);
             return false;
         }
         
+        // Only 1 out of every x times, do we actually do the AB.
+        // A new number is picked 1.5 times the number of bars (so every 0.75 bar)
+        // An x-value of 150, gives antiban of approximately every 100th bar made
         if (rand != 1) {
-            Log.antiban("Randomitivity: " + rand);
             return false;
+        }
+        
+        // If we have a Random Event Gift (Do they still give those?),
+        // we must handle it. This is done in the execute() loop.
+        if (hasREGift()) {
+            Log.antiban("We have a Random Event Gift.");
+            return true;
         }
         
         return true;
@@ -79,10 +94,6 @@ public class AntiBan extends Node{
                 Consts.CURRENT_STATUS = "ANTIBAN: Tried, but couldn't do it";
                 break;
         }
-    }
-
-    private int getFrequency(){
-        return 125 - Integer.parseInt(Consts.CONFIG.get("abFrequency"));
     }
 
     private void lookAround() {

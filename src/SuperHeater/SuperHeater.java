@@ -28,6 +28,7 @@ import org.powerbot.core.event.listeners.PaintListener;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.core.script.job.state.Node;
 import org.powerbot.core.script.job.state.Tree;
+import org.powerbot.core.script.util.Random;
 import org.powerbot.game.api.Manifest;
 import org.powerbot.game.api.methods.Game;
 import org.powerbot.game.api.methods.widget.Bank;
@@ -155,7 +156,8 @@ public class SuperHeater extends ActiveScript implements PaintListener, MouseLis
                 jobContainer = new Tree(jobs.toArray(new Node[jobs.size()]));
             }
         }
-        return 500;
+        
+        return Random.nextInt(300, 600);    // 1/2 to 1 "click"
     }
     
     @Override
