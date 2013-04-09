@@ -20,7 +20,7 @@ import org.powerbot.game.api.util.Time;
 import org.powerbot.game.api.wrappers.node.Item;
 import org.powerbot.game.api.wrappers.widget.WidgetChild;
 
-public class Methods {
+public class Methods{
     
     /**
      * Not working yet due to strange file permission errors.
@@ -36,6 +36,17 @@ public class Methods {
         } catch (IOException e) {
             Log.error(e);
         }
+    }
+    
+    /**
+     * Determines whether there is a target specified and if it has been
+     * reached.
+     * @return TRUE if target is reached. FALSE if not.
+     */
+    public static boolean isTargetReached(){
+        return (Consts.BAR_TARGET > 0 &&
+                Consts.CONFIG.get("barTargetEnabled").equals("TRUE") &&
+                Consts.BARS_MADE == Consts.BAR_TARGET);
     }
     
     public static String getDistanceToTarget(){
@@ -243,10 +254,10 @@ public class Methods {
         Log.info("Stopping the script...");
         
         // Set strategy determinants to false to prevent infinite loops
-        Consts.GO       = false;
-        Consts.BANK_NOW = false;
-        Consts.SHOW_GUI = false;
-        Consts.STOPPED  = true;
+        Consts.GO           = false;
+        Consts.BANK_NOW     = false;
+        Consts.SHOW_PAINT   = false;
+        Consts.STOPPED      = true;
         
         // Print info to console
         System.out.println("\n\n---------------------------------");

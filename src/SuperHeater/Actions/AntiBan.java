@@ -22,12 +22,31 @@ public class AntiBan extends Node{
     
     @Override
     public boolean activate() {
-        return (((Random.nextInt(0, getFrequency()) == 1) && !Consts.BANK_NOW && Consts.GO) || hasREGift());
+        //return (((Random.nextInt(0, getFrequency()) == 1) && !Consts.BANK_NOW && Consts.GO) || hasREGift());
+        //return (((1 == 1) && !Consts.BANK_NOW && Consts.GO) || hasREGift());
+        int rand = Random.nextInt(0, 50);
+        
+        if (Consts.BANK_NOW == true) {
+            Log.antiban("BANK NOW: " + Consts.BANK_NOW);
+            return false;
+        }
+        
+        if (Consts.GO == false) {
+            Log.antiban("GO: " + Consts.GO);
+            return false;
+        }
+        
+        if (rand != 1) {
+            Log.antiban("Randomitivity: " + rand);
+            return false;
+        }
+        
+        return true;
     }
     
     @Override
     public void execute() {
-        int r = Random.nextInt(0, 3);
+        int r = Random.nextInt(0, 2);
 
 
         // If we have a REGift, deal with it and RETURN!
@@ -49,11 +68,11 @@ public class AntiBan extends Node{
                 checkStats();
                 break;
 
-            case 2:
+            /*case 2:
                 Consts.CURRENT_STATUS = "ANTIBAN: Examining local players";
                 Log.antiban("Examining local players");
                 checkRandomPlayer();
-                break;
+                break;*/
 
             default:
                 Log.antiban("ANTIBAN ERROR. Could not do antiban");

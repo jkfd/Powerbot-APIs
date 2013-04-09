@@ -18,14 +18,15 @@ public class Consts {
 
     public static String      CURRENT_STATUS      = "";
     public static boolean     BANK_NOW;
-    public static boolean     SHOW_GUI            = true;
     public static boolean     SHOW_PAINT          = true;
     public static boolean     GO                  = false;
     public static boolean     NO_ORES             = false;
+    public static boolean     FIRST_START         = true;
     public static boolean     STOPPED             = false;
     public static long        START_TIME          = System.currentTimeMillis();
     public static long        RUNTIME             = 0;
     public static int         BARS_MADE           = 0;
+    public static int         DEPOSIT_COUNT       = 0;
     public static int         PRIMARY_ORE         = 0;
     public static int         SECONDARY_ORE       = 0;
     public static int         BARID               = 2349;

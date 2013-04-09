@@ -49,9 +49,6 @@ public class Banker extends Node{
             Methods.getREE("Open Bank", i);
         }
 
-        // Reset status after pin
-        Consts.CURRENT_STATUS = "Banking";
-
         // Do we have excess primary ore? If so deposit it
         while (Inventory.getCount(Consts.PRIMARY_ORE) > 0) {
             Log.info("Depositing Excess Primary Ore.");
@@ -65,8 +62,20 @@ public class Banker extends Node{
             Bank.deposit(Consts.SECONDARY_ORE, 0);
             Task.sleep(Random.nextInt(17, 534));
         }
-
+        
+        // Update the deposit count and verify the bar count.
+        Consts.DEPOSIT_COUNT += Inventory.getCount(Consts.BARID);
+        Consts.BARS_MADE = Consts.DEPOSIT_COUNT;
+        
+        // Check if we have reached our target number of bars. If so STOP.
+        if(Methods.isTargetReached()){
+            Log.severe("Target number of bars reached!");
+            Methods.stopSuperHeater();
+            return;
+        }
+        
         // Do we have any unnecessary items in our Inventory? Deposit.
+        // Also depositis bars
         depositForeignItems();
 
         // Check if we are out of ores. If we are, exit the script

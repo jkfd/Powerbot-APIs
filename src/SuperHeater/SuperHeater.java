@@ -56,7 +56,6 @@ public class SuperHeater extends ActiveScript implements PaintListener, MouseLis
     public void onRepaint(Graphics g) {
         // Update Time
         Consts.RUNTIME = System.currentTimeMillis() - Consts.START_TIME;
-        
         // Set up advanced graphics 
         Graphics2D g2d = (Graphics2D)g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -150,9 +149,9 @@ public class SuperHeater extends ActiveScript implements PaintListener, MouseLis
                 }
 
             } else {
-                jobs.add(new SpellCaster());
-                jobs.add(new Banker());
                 jobs.add(new AntiBan());
+                jobs.add(new SpellCaster());
+                jobs.add(new Banker());                
                 jobContainer = new Tree(jobs.toArray(new Node[jobs.size()]));
             }
         }
@@ -272,7 +271,11 @@ public class SuperHeater extends ActiveScript implements PaintListener, MouseLis
                         component.setVisible(false);
                         GUI.stopGoButtons.get("Stop").setVisible(true);
                         Consts.GO = true;
-                        Consts.START_TIME = System.currentTimeMillis();
+                        
+                        if (Consts.FIRST_START) {
+                            Consts.START_TIME = System.currentTimeMillis();
+                            Consts.FIRST_START = false;
+                        }
                         break;
                     case 12:
                         // Pause Script
