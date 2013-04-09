@@ -11,7 +11,7 @@ public class Consts {
     public static final Map<String,String>      CONFIG  = new HashMap<String,String>();
     public static final Map<String,Integer[][]> BARREQ  = new HashMap<String,Integer[][]>();
     public static final Map<String,Double[]>    BARXP   = new HashMap<String,Double[]>();
-    public static final String                  VERSION = "1.60";
+    public static final String                  VERSION = "1.61";
     
     public final static int   COAL_BAG            = 18339;
     public final static int   NATURE_RUNE         = 561;

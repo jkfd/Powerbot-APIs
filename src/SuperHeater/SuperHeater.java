@@ -39,7 +39,7 @@ import org.powerbot.game.client.Client;
 @Manifest(  authors = { "jkfd" },
             name = "F2PSuperHeater",
             description = "Simply the best.",
-            version = 1.60,
+            version = 1.61,
             website = "https://www.powerbot.org/community/topic/964475-beta-f2p-superheater-free/")
 
 public class SuperHeater extends ActiveScript implements PaintListener, MouseListener, KeyListener
