@@ -8,7 +8,7 @@ import SuperHeater.GUI.GUI;
 import SuperHeater.GUI.Painter;
 import SuperHeater.GUI.TextField;
 import SuperHeater.GrandExchange.GE;
-import SuperHeater.Misc.Consts;
+import SuperHeater.Misc.Globals;
 import SuperHeater.Misc.Logging.Log;
 import SuperHeater.Misc.Methods;
 import java.awt.Font;
@@ -21,6 +21,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import javax.swing.JFrame;
 import org.powerbot.core.Bot;
@@ -56,14 +57,14 @@ public class SuperHeater extends ActiveScript implements PaintListener, MouseLis
     @Override
     public void onRepaint(Graphics g) {
         // Update Time
-        Consts.RUNTIME = System.currentTimeMillis() - Consts.START_TIME;
+        Globals.RUNTIME = System.currentTimeMillis() - Globals.START_TIME;
         // Set up advanced graphics 
         Graphics2D g2d = (Graphics2D)g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setFont(Font.decode("Arial"));
         
         // These are objects drawn only when the paint should be shown
-        if (Consts.SHOW_PAINT) {
+        if (Globals.SHOW_PAINT) {
             Painter.drawBackground(g2d);
             Painter.drawTabs(g2d);
             Painter.drawButtons(g2d, GUI.tabButtons);
@@ -82,46 +83,27 @@ public class SuperHeater extends ActiveScript implements PaintListener, MouseLis
         
         for(Frame f : JFrame.getFrames()) {
             if (f.getTitle().contains("RSBot")) {
-                Consts.RSBOT_FRAME = f;
+                Globals.RSBOT_FRAME = f;
             }
         }
         
         // Default Config Settings
-        Consts.CONFIG.put("barType",            "Bronze");
-        Consts.CONFIG.put("useCB",              "FALSE");
-        Consts.CONFIG.put("retries",            "5");
-        Consts.CONFIG.put("stopAction",         "nothing");
-        Consts.CONFIG.put("barTargetEnabled",   "FALSE");
-        Consts.CONFIG.put("barTarget",          "0");
-        Consts.CONFIG.put("abFrequency",        "50");
-        Consts.CONFIG.put("ABSlotInd",          "0");
-        Consts.CONFIG.put("sellBars",           "FALSE");
-        Consts.CONFIG.put("barPrice",           "100000");
-
-        // Define HashMaps
-        Consts.BARREQ.put("Bronze",    new Integer[][] {{436,1}, {438,1},  {2349, 2350}});
-        Consts.BARREQ.put("Iron",      new Integer[][] {{440,1}, {0,0},    {2351, 2352}});
-        Consts.BARREQ.put("Silver",    new Integer[][] {{442,1}, {0,0},    {2355, 2356}});
-        Consts.BARREQ.put("Gold",      new Integer[][] {{444,1}, {0,0},    {2357, 2358}});
-        Consts.BARREQ.put("Steel",     new Integer[][] {{440,1}, {453,2},  {2353, 2354}});
-        Consts.BARREQ.put("Mithril",   new Integer[][] {{447,1}, {453,4},  {2359, 2360}});
-        Consts.BARREQ.put("Adamantite",new Integer[][] {{449,1}, {453,6},  {2361, 2362}});
-        Consts.BARREQ.put("Runite",    new Integer[][] {{451,1}, {453,8},  {2363, 2364}});
-
-        Consts.BARXP.put("Bronze",     new Double[] {53.0, 6.20});
-        Consts.BARXP.put("Iron",       new Double[] {53.0, 12.50});
-        Consts.BARXP.put("Silver",     new Double[] {53.0, 13.67});
-        Consts.BARXP.put("Gold",       new Double[] {53.0, 22.50});
-        Consts.BARXP.put("Steel",      new Double[] {53.0, 17.50});
-        Consts.BARXP.put("Mithril",    new Double[] {53.0, 30.00});
-        Consts.BARXP.put("Adamantite", new Double[] {53.0, 37.50});
-        Consts.BARXP.put("Runite",     new Double[] {53.0, 50.00});
+        Globals.CONFIG.put("barType",            "BRONZE");
+        Globals.CONFIG.put("useCB",              "FALSE");
+        Globals.CONFIG.put("retries",            "5");
+        Globals.CONFIG.put("stopAction",         "NONE");
+        Globals.CONFIG.put("barTargetEnabled",   "FALSE");
+        Globals.CONFIG.put("barTarget",          "0");
+        Globals.CONFIG.put("abFrequency",        "50");
+        Globals.CONFIG.put("ABSlotInd",          "0");
+        Globals.CONFIG.put("sellBars",           "FALSE");
+        Globals.CONFIG.put("barPrice",           "100000");
         
         GE.SLOTS.put(1, new Integer[] {31, 32});
         GE.SLOTS.put(2, new Integer[] {47, 48});
 
         // Are we in the bank? Do we need to bank?
-        Consts.BANK_NOW = (Bank.isOpen() || Methods.checkNeedBank());
+        Globals.BANK_NOW = (Bank.isOpen() || Methods.checkNeedBank());
 
         
         GUI.init();
@@ -129,7 +111,7 @@ public class SuperHeater extends ActiveScript implements PaintListener, MouseLis
     
     @Override
     public int loop() {
-        if (Consts.GO) {
+        if (Globals.GO) {
             if (Game.getClientState() != Game.INDEX_MAP_LOADED) {
                 return 2500;
             }
@@ -163,14 +145,14 @@ public class SuperHeater extends ActiveScript implements PaintListener, MouseLis
     @Override
     public void onStop(){
         Methods.stopSuperHeater();
+        return;
     }
 
     public void mouseClicked(final MouseEvent e) {
-       throw new UnsupportedOperationException("Not supported yet.");
+       return;
     }
 
     public void mousePressed(final MouseEvent e) {
-        Painter.setMousePressed(true);
         
         /*
          * Loop through each component drawn on the GUI to see if we have clicked it.
@@ -188,7 +170,7 @@ public class SuperHeater extends ActiveScript implements PaintListener, MouseLis
                         break;
                     case 1:
                         // Switch hide button for show button when GUI no longer visible
-                        Consts.SHOW_PAINT = false;
+                        Globals.SHOW_PAINT = false;
                         component.setVisible(false);
                         GUI.components.get("show").setVisible(true);
                         GUI.disableButtons(GUI.tabButtons);
@@ -200,7 +182,7 @@ public class SuperHeater extends ActiveScript implements PaintListener, MouseLis
                         break;
                     case 2:
                         // Switch show button for hide button when GUI is visible
-                        Consts.SHOW_PAINT = true;
+                        Globals.SHOW_PAINT = true;
                         component.setVisible(false);
                         GUI.components.get("hide").setVisible(true);
                         GUI.enableButtons(GUI.tabButtons);
@@ -214,7 +196,7 @@ public class SuperHeater extends ActiveScript implements PaintListener, MouseLis
                         // Make a display a popup with instructions and console output
                         GUI.showTextPopup(
                                 "Paste this into your post when reporting a bug", 
-                                Log.dumpLog());
+                                Log.dumpLog(new Date(System.currentTimeMillis()- 1*60*60*1000)));
                         break;
                     case 4:
                         // Change the tab to the overview tab.
@@ -236,35 +218,35 @@ public class SuperHeater extends ActiveScript implements PaintListener, MouseLis
                             }
                         }
                         component.setSelected(true);
-                        Consts.CONFIG.put("barType", k);
+                        Globals.CONFIG.put("barType", k.toUpperCase());
                         
                         // Shortcut relevant hashMap entries
-                        Consts.PRIMARY_ORE     = Consts.BARREQ.get(Consts.CONFIG.get("barType"))[0][0];
-                        Consts.SECONDARY_ORE   = Consts.BARREQ.get(Consts.CONFIG.get("barType"))[1][0];
-                        Consts.BARID           = Consts.BARREQ.get(Consts.CONFIG.get("barType"))[2][0];
-                        Consts.ACTIVE_ORE      = Consts.BARREQ.get(Consts.CONFIG.get("barType"));
+                        Globals.ACTIVE_ORE      = Globals.BARREQ.valueOf(Globals.CONFIG.get("barType"));
+                        Globals.PRIMARY_ORE     = Globals.ACTIVE_ORE.getPrimaryID();
+                        Globals.SECONDARY_ORE   = Globals.ACTIVE_ORE.getSecondaryID();
+                        Globals.BARID           = Globals.ACTIVE_ORE.getBarID();
                         break;
                     case 7:
                         // Set Config to use coal bag
-                        Consts.CONFIG.put("useCB", "TRUE");
+                        Globals.CONFIG.put("useCB", "TRUE");
                         component.setSelected(true);
                         GUI.CBButtons.get("CBNo").setSelected(false);
                         break;
                     case 8:
                         // Set Config to not use coal bag
-                        Consts.CONFIG.put("useCB", "FALSE");
+                        Globals.CONFIG.put("useCB", "FALSE");
                         component.setSelected(true);
                         GUI.CBButtons.get("CBYes").setSelected(false);
                         break;
                     case 9:
                         // Set Config to use target
-                        Consts.CONFIG.put("barTargetEnabled", "TRUE");
+                        Globals.CONFIG.put("barTargetEnabled", "TRUE");
                         component.setSelected(true);
                         GUI.targetButtons.get("targetNo").setSelected(false);
                         break;
                     case 10:
                         // Set Config to not use target
-                        Consts.CONFIG.put("barTargetEnabled", "FALSE");
+                        Globals.CONFIG.put("barTargetEnabled", "FALSE");
                         component.setSelected(true);
                         GUI.targetButtons.get("targetYes").setSelected(false);
                         break;
@@ -272,46 +254,46 @@ public class SuperHeater extends ActiveScript implements PaintListener, MouseLis
                         // Start the script
                         component.setVisible(false);
                         GUI.stopGoButtons.get("Stop").setVisible(true);
-                        Consts.GO = true;
+                        Globals.GO = true;
                         
-                        if (Consts.FIRST_START) {
-                            Consts.START_TIME = System.currentTimeMillis();
-                            Consts.FIRST_START = false;
+                        if (Globals.FIRST_START) {
+                            Globals.START_TIME = System.currentTimeMillis();
+                            Globals.FIRST_START = false;
                         }
                         break;
                     case 12:
                         // Pause Script
                         component.setVisible(false);
                         GUI.stopGoButtons.get("Start").setVisible(true);
-                        Consts.GO = false;
+                        Globals.GO = false;
                         break;
                     case 13:
                         // Set to logout on exit
-                        Consts.CONFIG.put("stopAction", "logout");
+                        Globals.CONFIG.put("stopAction", "LOGOUT");
                         component.setSelected(true);
                         GUI.logoutButtons.get("logoutNo").setSelected(false);
                         break;
                     case 14:
                         // Set to NOT logout on exit
-                        Consts.CONFIG.put("stopAction", "none");
+                        Globals.CONFIG.put("stopAction", "NONE");
                         component.setSelected(true);
                         GUI.logoutButtons.get("logoutYes").setSelected(false);
                         break;
                     case 15:
                         // Set to sell on exit
-                        Consts.CONFIG.put("sellBars", "TRUE");
+                        Globals.CONFIG.put("sellBars", "TRUE");
                         component.setSelected(true);
                         GUI.GEButtons.get("GENo").setSelected(false);
                         break;
                     case 16:
                         // Set to sell on exit
-                        Consts.CONFIG.put("sellBars", "FALSE");
+                        Globals.CONFIG.put("sellBars", "FALSE");
                         component.setSelected(true);
                         GUI.GEButtons.get("GEYes").setSelected(false);
                         break;
                     case 17:
                         // Fetch current bar price from GE and set it in the GE Price field
-                        int price = GeItem.lookup(Consts.BARID).getPrice();
+                        int price = GeItem.lookup(Globals.BARID).getPrice();
                         GUI.textFields.get("PriceInput").setValue(String.valueOf(price));
                         break;
                     default:
@@ -339,15 +321,15 @@ public class SuperHeater extends ActiveScript implements PaintListener, MouseLis
     }
 
     public void mouseReleased(final MouseEvent e) {
-        Painter.setMousePressed(false);
+        return;
     }
 
     public void mouseEntered(final MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return;
     }
 
     public void mouseExited(final MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return;
     }
 
     public void keyTyped(KeyEvent e) {
@@ -361,20 +343,20 @@ public class SuperHeater extends ActiveScript implements PaintListener, MouseLis
             
             // Then  set the corresponding CONFIG value.
             if ("TargetInput".equals(tf.getName())) {
-                Consts.CONFIG.put("barTarget", tf.getValue());
-                Consts.BAR_TARGET = Integer.decode(tf.getValue()).intValue();
+                Globals.CONFIG.put("barTarget", tf.getValue());
+                Globals.BAR_TARGET = Integer.decode(tf.getValue()).intValue();
             } else if ("PriceInput".equals(tf.getName())) {
-                Consts.CONFIG.put("barPrice", tf.getValue());
-                Consts.SELLING_PRICE = Integer.decode(tf.getValue()).intValue();
+                Globals.CONFIG.put("barPrice", tf.getValue());
+                Globals.SELLING_PRICE = Integer.decode(tf.getValue()).intValue();
             }
         }
     }
 
     public void keyPressed(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return;
     }
 
     public void keyReleased(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return;
     }
 }

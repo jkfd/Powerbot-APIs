@@ -1,6 +1,6 @@
 package SuperHeater.Actions;
 
-import SuperHeater.Misc.Consts;
+import SuperHeater.Misc.Globals;
 import SuperHeater.Misc.Logging.Log;
 import SuperHeater.Misc.Methods;
 import org.powerbot.core.script.job.Task;
@@ -19,16 +19,16 @@ public class Banker extends Node{
     
     @Override
     public boolean activate() {
-        return (Consts.BANK_NOW && Consts.GO);
+        return (Globals.BANK_NOW && Globals.GO);
     }
     
     @Override
     public void execute() {
         // Precalculate variables
-        int retries = Integer.parseInt(Consts.CONFIG.get("retries"));
+        int retries = Integer.parseInt(Globals.CONFIG.get("retries"));
 
         // Set Status
-        Consts.CURRENT_STATUS = "Banking";
+        Globals.CURRENT_STATUS = "Banking";
 
         // If we are banking, but we already have our stuff, exit.
         if(checkInvStatus()){
@@ -37,7 +37,7 @@ public class Banker extends Node{
                 Bank.close();
             }   // Close only if bank is already open
 
-            Consts.BANK_NOW = false;
+            Globals.BANK_NOW = false;
             return;
         }
 
@@ -50,22 +50,22 @@ public class Banker extends Node{
         }
 
         // Do we have excess primary ore? If so deposit it
-        while (Inventory.getCount(Consts.PRIMARY_ORE) > 0) {
+        while (Inventory.getCount(Globals.PRIMARY_ORE) > 0) {
             Log.info("Depositing Excess Primary Ore.");
-            Bank.deposit(Consts.PRIMARY_ORE, 0);
+            Bank.deposit(Globals.PRIMARY_ORE, 0);
             Task.sleep(Random.nextInt(20, 472));
         }
 
         // Do we have excess secondary ore? If so deposit it
-        while (Inventory.getCount(Consts.SECONDARY_ORE) > 0) {
+        while (Inventory.getCount(Globals.SECONDARY_ORE) > 0) {
             Log.info("Depositing Excess Secondary Ore.");
-            Bank.deposit(Consts.SECONDARY_ORE, 0);
+            Bank.deposit(Globals.SECONDARY_ORE, 0);
             Task.sleep(Random.nextInt(17, 534));
         }
         
         // Update the deposit count and verify the bar count.
-        Consts.DEPOSIT_COUNT += Inventory.getCount(Consts.BARID);
-        Consts.BARS_MADE = Consts.DEPOSIT_COUNT;
+        Globals.DEPOSIT_COUNT += Inventory.getCount(Globals.BARID);
+        Globals.BARS_MADE = Globals.DEPOSIT_COUNT;
         
         // Check if we have reached our target number of bars. If so STOP.
         if(Methods.isTargetReached()){
@@ -81,8 +81,8 @@ public class Banker extends Node{
         // Check if we are out of ores. If we are, exit the script
         if(isOutOfOres()) {
             Log.severe("The script has detected that you are out of ores!");
-            Consts.CURRENT_STATUS = "Out of ores! Stopping.";
-            Consts.BANK_NOW = false;
+            Globals.CURRENT_STATUS = "Out of ores! Stopping.";
+            Globals.BANK_NOW = false;
             Task.sleep(500);
             Methods.stopSuperHeater();
             return;
@@ -102,9 +102,9 @@ public class Banker extends Node{
 
 
         // Withdraw Nats
-        for (int i = 0; Inventory.getCount(Consts.NATURE_RUNE) < 1 && i < retries; i++) {
+        for (int i = 0; Inventory.getCount(Globals.NATURE_RUNE) < 1 && i < retries; i++) {
             Log.info("Withdrawing Nats. TRY: " + (i+1));
-            Bank.withdraw(Consts.NATURE_RUNE, 0); // withdraw (NATS,Amount)
+            Bank.withdraw(Globals.NATURE_RUNE, 0); // withdraw (NATS,Amount)
 
             Methods.getREE("Withdrawing Nats", i);
         }
@@ -113,7 +113,7 @@ public class Banker extends Node{
         // if not, deposit everything and try again :(
         if(checkInvStatus()){
             Bank.close();
-            Consts.BANK_NOW = false;
+            Globals.BANK_NOW = false;
         } else {
             depositForeignItems();
             depositMistakes();
@@ -124,13 +124,13 @@ public class Banker extends Node{
 
         Log.info("Checking if you are out of ores...");
 
-        Consts.NO_ORES = (
-                (getBankCount(Consts.PRIMARY_ORE) == 0 && Inventory.getCount(Consts.PRIMARY_ORE) == 0) ||
-                (getBankCount(Consts.SECONDARY_ORE) == 0 && Inventory.getCount(Consts.SECONDARY_ORE) == 0 && Methods.getSWA(false) != 0)||
-                (Inventory.getCount(Consts.NATURE_RUNE) == 0)
+        Globals.NO_ORES = (
+                (getBankCount(Globals.PRIMARY_ORE) == 0 && Inventory.getCount(Globals.PRIMARY_ORE) == 0) ||
+                (getBankCount(Globals.SECONDARY_ORE) == 0 && Inventory.getCount(Globals.SECONDARY_ORE) == 0 && Methods.getSWA(false) != 0)||
+                (Inventory.getCount(Globals.NATURE_RUNE) == 0)
                 );
 
-        return(Consts.NO_ORES);
+        return(Globals.NO_ORES);
     }
 
     private int getBankCount(int id){
@@ -167,26 +167,26 @@ public class Banker extends Node{
 
         Log.info("Checking if we have the right inventory");
 
-        if(getBankCount(Consts.PRIMARY_ORE) < Methods.getPWA(false) 
-        || getBankCount(Consts.SECONDARY_ORE) < Methods.getSWA(false)){
+        if(getBankCount(Globals.PRIMARY_ORE) < Methods.getPWA(false)    ||
+            getBankCount(Globals.SECONDARY_ORE) < Methods.getSWA(false)){
 
-            if(Inventory.getCount(Consts.PRIMARY_ORE) <= 0) {
+            if(Inventory.getCount(Globals.PRIMARY_ORE) <= 0) {
                 Log.info("Primary Ore Inventory amount can't be 0");
                 Log.severe("Inventory status NOT approved");
                 return false;
             }
 
-            if(Inventory.getCount(Consts.PRIMARY_ORE) > Methods.getPWA(false)) {
+            if(Inventory.getCount(Globals.PRIMARY_ORE) > Methods.getPWA(false)) {
                 Log.info("Primary Ore Inventory amount ("
-                        + Inventory.getCount(Consts.PRIMARY_ORE)
+                        + Inventory.getCount(Globals.PRIMARY_ORE)
                         +") is not equal or less than target amount ("+Methods.getPWA(false)+")");
                 Log.severe("Inventory status NOT approved");
                 return false;
             }
 
-            if(Inventory.getCount(Consts.SECONDARY_ORE) < Methods.getSWA(false)) {
+            if(Inventory.getCount(Globals.SECONDARY_ORE) < Methods.getSWA(false)) {
                 Log.info("Secondary Ore Inventory amount ("
-                        + Inventory.getCount(Consts.SECONDARY_ORE)
+                        + Inventory.getCount(Globals.SECONDARY_ORE)
                         +") is less than target amount ("+Methods.getSWA(false)+")");
                 Log.severe("Inventory status NOT approved");
                 return false;
@@ -196,23 +196,23 @@ public class Banker extends Node{
             return true;
         } else {
 
-            if(Inventory.getCount(Consts.PRIMARY_ORE) != Methods.getPWA(false)) {
+            if(Inventory.getCount(Globals.PRIMARY_ORE) != Methods.getPWA(false)) {
                 Log.info("Primary Ore Inventory amount ("
-                        + Inventory.getCount(Consts.PRIMARY_ORE)
+                        + Inventory.getCount(Globals.PRIMARY_ORE)
                         +") is not equal to target amount ("+Methods.getPWA(false)+")");
                 Log.severe("Inventory status NOT approved");
                 return false;
             }
 
-            if(Inventory.getCount(Consts.SECONDARY_ORE) < Methods.getSWA(false)) {
+            if(Inventory.getCount(Globals.SECONDARY_ORE) < Methods.getSWA(false)) {
                 Log.info("Secondary Ore Inventory amount ("
-                        + Inventory.getCount(Consts.SECONDARY_ORE)
+                        + Inventory.getCount(Globals.SECONDARY_ORE)
                         +") is less than target amount ("+Methods.getSWA(false)+")");
                 Log.severe("Inventory status NOT approved");
                 return false;
             }
 
-            if(Inventory.getCount(Consts.NATURE_RUNE) == 0) {
+            if(Inventory.getCount(Globals.NATURE_RUNE) == 0) {
                 Log.info("Out of nature runes");
                 Log.severe("Inventory status NOT approved");
                 return false;
@@ -230,8 +230,8 @@ public class Banker extends Node{
             for(WidgetChild child : Inventory.getWidget(true).getChildren()) {
 
                 if(
-                        (child.getChildId() != Consts.NATURE_RUNE) && 
-                        (child.getChildId() != Consts.COAL_BAG) && 
+                        (child.getChildId() != Globals.NATURE_RUNE) && 
+                        (child.getChildId() != Globals.COAL_BAG) && 
                         (child.getChildId() != -1)
                    ) {
                     Log.info("Depositing: " + child.getText());
@@ -247,17 +247,18 @@ public class Banker extends Node{
 
     private void depositForeignItems(){
         Log.info("Depositing all items NOT needed for making "
-                + Consts.CONFIG.get("barType") + " bars");
+                + Globals.CONFIG.get("barType") + " bars");
 
         // Get all items in inventory that are NOT part of making the bar
         // (Ores prim and sec + nats)
         Item[] items = Inventory.getItems(new Filter<Item>() {
            public boolean accept(final Item item) {
                   return (
-                          (item.getId() != Consts.ACTIVE_ORE[1][0]) && // Sec
-                          (item.getId() != Consts.ACTIVE_ORE[0][0]) && // Pri
-                          (item.getId() != Consts.NATURE_RUNE) &&
-                          (item.getId() != Consts.COAL_BAG));   
+                          (item.getId() != Globals.PRIMARY_ORE)  && 
+                          (item.getId() != Globals.SECONDARY_ORE)&& 
+                          (item.getId() != Globals.NATURE_RUNE)  &&
+                          (item.getId() != Globals.COAL_BAG)
+                          );   
            }
         });
 
@@ -275,15 +276,15 @@ public class Banker extends Node{
     private void withdrawPrimary(){
         int timeout = 0;
 
-        if(Inventory.getCount(Consts.PRIMARY_ORE) == Methods.getPWA(false)){
+        if(Inventory.getCount(Globals.PRIMARY_ORE) == Methods.getPWA(false)){
             return;
         }
 
-        if(getBankCount(Consts.PRIMARY_ORE) == 0){
+        if(getBankCount(Globals.PRIMARY_ORE) == 0){
             return;
         }
 
-        while ((Inventory.getCount(Consts.PRIMARY_ORE) < Methods.getPWA(false)) && (timeout < 3)){
+        while ((Inventory.getCount(Globals.PRIMARY_ORE) < Methods.getPWA(false)) && (timeout < 3)){
             Log.info("Withdrawing Primary Ores");
 
             // Exit the loop if we can pass the inv. check
@@ -291,7 +292,7 @@ public class Banker extends Node{
                 return;
             }
 
-            Bank.withdraw(Consts.PRIMARY_ORE, Methods.getPWA(true));
+            Bank.withdraw(Globals.PRIMARY_ORE, Methods.getPWA(true));
             timeout++;
             Task.sleep(Random.nextInt(432, 886));
         }
@@ -305,15 +306,15 @@ public class Banker extends Node{
             return;
         }
 
-        if(Inventory.getCount(Consts.SECONDARY_ORE) == Methods.getSWA(false)) {
+        if(Inventory.getCount(Globals.SECONDARY_ORE) == Methods.getSWA(false)) {
             return;
         }
 
-        if(getBankCount(Consts.SECONDARY_ORE) == 0) {
+        if(getBankCount(Globals.SECONDARY_ORE) == 0) {
             return;
         }
 
-        while ((Inventory.getCount(Consts.SECONDARY_ORE) < Methods.getSWA(false)) && (timeout < 3)){
+        while ((Inventory.getCount(Globals.SECONDARY_ORE) < Methods.getSWA(false)) && (timeout < 3)){
             Log.info("Withdrawing Secondary Ores");
 
             // Exit the loop if we can pass the inv. check
@@ -321,29 +322,29 @@ public class Banker extends Node{
                 return;
             }
 
-            Bank.withdraw(Consts.SECONDARY_ORE, Methods.getSWA(true));
+            Bank.withdraw(Globals.SECONDARY_ORE, Methods.getSWA(true));
             timeout++;
             Task.sleep(Random.nextInt(432, 886));
         }
 
-        if(Inventory.getCount(Consts.SECONDARY_ORE) != Methods.getSWA(false)) {
+        if(Inventory.getCount(Globals.SECONDARY_ORE) != Methods.getSWA(false)) {
             depositMistakes();
         }
 
     }
 
     private void fillCoalBag(){
-        if ((Inventory.getCount(Consts.COAL_BAG) > 0) && Consts.CONFIG.get("useCB").equals("TRUE")) {
+        if ((Inventory.getCount(Globals.COAL_BAG) > 0) && Globals.CONFIG.get("useCB").equals("TRUE")) {
 
-            for (int i = 0; (Inventory.getCount(Consts.SECONDARY_ORE) > 0) && i < 3; i++) {
-                Inventory.getItem(Consts.COAL_BAG).getWidgetChild().interact("Fill");
+            for (int i = 0; (Inventory.getCount(Globals.SECONDARY_ORE) > 0) && i < 3; i++) {
+                Inventory.getItem(Globals.COAL_BAG).getWidgetChild().interact("Fill");
                 Task.sleep(Random.nextInt(107, 728));
             }
 
             // Added to fix issue where script does not recognize the coal bag being full. 
             // Script will now deposit any excess coal that has not entered the bag after the 3 
             // tries in the above for-loop and continue.
-            if (Inventory.getCount(Consts.SECONDARY_ORE) > 0) {
+            if (Inventory.getCount(Globals.SECONDARY_ORE) > 0) {
                 Log.severe("SUSPECTING that coal bag is full. "
                         + "Depositing remaining coal through the depositMistakes() method.");
                 depositMistakes();
@@ -376,12 +377,12 @@ public class Banker extends Node{
     
     private void getCB(){
         // Do not get if we're not supposed to be using it.
-        if (!Consts.CONFIG.get("useCB").equals("TRUE") || Consts.SECONDARY_ORE != 453) {
+        if (!Globals.CONFIG.get("useCB").equals("TRUE") || Globals.SECONDARY_ORE != 453) {
             return;
         }
 
         // Do not get if we already have.
-        if (Inventory.getCount(Consts.COAL_BAG) > 0) {
+        if (Inventory.getCount(Globals.COAL_BAG) > 0) {
             return;
         }
 

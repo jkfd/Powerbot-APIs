@@ -1,6 +1,6 @@
 package SuperHeater.Actions;
 
-import SuperHeater.Misc.Consts;
+import SuperHeater.Misc.Globals;
 import SuperHeater.Misc.Logging.Log;
 import SuperHeater.Misc.Methods;
 import java.awt.event.KeyEvent;
@@ -21,25 +21,25 @@ public class SpellCaster extends Node {
     
     @Override
     public boolean activate() {
-        return (Consts.BANK_NOW == false && 
-                Consts.GO == true &&
-                Inventory.getCount(Consts.PRIMARY_ORE) > 0
-                && Inventory.getCount(Consts.NATURE_RUNE) > 0
-                && Inventory.getCount(Consts.SECONDARY_ORE) >= Consts.ACTIVE_ORE[1][1]);
+        return (Globals.BANK_NOW == false && 
+                Globals.GO == true &&
+                Inventory.getCount(Globals.PRIMARY_ORE) > 0
+                && Inventory.getCount(Globals.NATURE_RUNE) > 0
+                && Inventory.getCount(Globals.SECONDARY_ORE) >= Globals.ACTIVE_ORE.getSecondaryAmount());
     }
 
     @Override
     public void execute() {
-        int ABIndex = Integer.parseInt(Consts.CONFIG.get("ABSlotInd"));
+        int ABIndex = Integer.parseInt(Globals.CONFIG.get("ABSlotInd"));
         Filter<Item> pOreFilter = new Filter<Item>() {
 
             public boolean accept(Item t) {
-                return t.getId() == Consts.PRIMARY_ORE;
+                return t.getId() == Globals.PRIMARY_ORE;
             }
         };
         
         // Set Status
-        Consts.CURRENT_STATUS = "Superheating";
+        Globals.CURRENT_STATUS = "Superheating";
 
         // Open inventory tab if not already open
         if (Tabs.INVENTORY != Tabs.getCurrent()) {
@@ -52,9 +52,9 @@ public class SpellCaster extends Node {
 
             // If we need to bank, return out of the current function.
             // Also return if we are already in the bank as we shouldn't be in this loop.
-            Consts.BANK_NOW = Methods.checkNeedBank();
+            Globals.BANK_NOW = Methods.checkNeedBank();
             
-            if(Consts.BANK_NOW == true || Bank.isOpen()) {
+            if(Globals.BANK_NOW == true || Bank.isOpen()) {
                 return;
             }
             
@@ -68,7 +68,7 @@ public class SpellCaster extends Node {
             // Check if the superheat spell is set in the action bar
             // If not, set it.
             if (ActionBar.getAbilityId(ABIndex) != Spell.SUPERHEAT_ITEM.getAbilityId()) {
-                ActionBar.dragToSlot(Consts.SUPERHEATABILITY,ABIndex);
+                ActionBar.dragToSlot(Globals.SUPERHEATABILITY,ABIndex);
                 Task.sleep(Random.nextInt(147, 259));
             }
             
@@ -99,7 +99,7 @@ public class SpellCaster extends Node {
     private void incrementBars(){
         
         // Increase the global bar count
-        Consts.BARS_MADE = Consts.DEPOSIT_COUNT + Inventory.getCount(Consts.BARID);
+        Globals.BARS_MADE = Globals.DEPOSIT_COUNT + Inventory.getCount(Globals.BARID);
         
         // Check if we have reached our target number of bars. If so STOP.
         if(Methods.isTargetReached()){

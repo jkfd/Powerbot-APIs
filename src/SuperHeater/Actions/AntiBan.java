@@ -1,6 +1,6 @@
 package SuperHeater.Actions;
 
-import SuperHeater.Misc.Consts;
+import SuperHeater.Misc.Globals;
 import SuperHeater.Misc.Logging.Log;
 import SuperHeater.Misc.Methods;
 import org.powerbot.core.script.job.Task;
@@ -22,23 +22,23 @@ public class AntiBan extends Node{
     
     @Override
     public boolean activate() {
-        //return (((Random.nextInt(0, getFrequency()) == 1) && !Consts.BANK_NOW && Consts.GO) || hasREGift());
-        //return (((1 == 1) && !Consts.BANK_NOW && Consts.GO) || hasREGift());
+        //return (((Random.nextInt(0, getFrequency()) == 1) && !Globals.BANK_NOW && Globals.GO) || hasREGift());
+        //return (((1 == 1) && !Globals.BANK_NOW && Globals.GO) || hasREGift());
         int rand = Random.nextInt(0, 150);
         
         // If we ARE banking, no antiban
-        if (Consts.BANK_NOW == true) {
+        if (Globals.BANK_NOW) {
             return false;
         }
         
         // If we're SUPPOSED to be banking, no AB (Or we'll get stuck)
-        if (Methods.checkNeedBank() == true) {
-            Consts.BANK_NOW = Methods.checkNeedBank();
+        if (Methods.checkNeedBank()) {
+            Globals.BANK_NOW = Methods.checkNeedBank();
             return false;
         }
         
         // If we're paused, no AB
-        if (Consts.GO == false) {
+        if (!Globals.GO) {
             return false;
         }
         
@@ -72,26 +72,26 @@ public class AntiBan extends Node{
 
         switch (r) {
             case 0:
-                Consts.CURRENT_STATUS = "ANTIBAN: Looking around";
+                Globals.CURRENT_STATUS = "ANTIBAN: Looking around";
                 Log.antiban("Looking Around");
                 lookAround();
                 break;
 
             case 1:
-                Consts.CURRENT_STATUS = "ANTIBAN: Checking Stats";
+                Globals.CURRENT_STATUS = "ANTIBAN: Checking Stats";
                 Log.antiban("Checking Stats...");
                 checkStats();
                 break;
 
             /*case 2:
-                Consts.CURRENT_STATUS = "ANTIBAN: Examining local players";
+                Globals.CURRENT_STATUS = "ANTIBAN: Examining local players";
                 Log.antiban("Examining local players");
                 checkRandomPlayer();
                 break;*/
 
             default:
                 Log.antiban("ANTIBAN ERROR. Could not do antiban");
-                Consts.CURRENT_STATUS = "ANTIBAN: Tried, but couldn't do it";
+                Globals.CURRENT_STATUS = "ANTIBAN: Tried, but couldn't do it";
                 break;
         }
     }

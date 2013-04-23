@@ -6,23 +6,29 @@ import java.util.Date;
 import java.util.List;
 
 public class Log {
+    
+    public String TYPE_ANTIBAN  = "ANTIBAN";
+    public String TYPE_ERROR    = "ERROR";
+    public String TYPE_INFO     = "INFO";
+    public String TYPE_SEVERE   = "SEVERE";
+    
     private static List<Entry> completeLog = new ArrayList<Entry>();
     
     public static void severe(Object o){
-        addToLog("severe", o, true);
+        addToLog("severe", o);
         
     }
     
     public static void info(Object o){
-        addToLog("info", o, true);
+        addToLog("info", o);
     }
     
     public static void error(Object o){
-        addToLog("error", o, true);
+        addToLog("error", o);
     }
     
     public static void antiban(Object o){
-        addToLog("antiban", o, true);
+        addToLog("antiban", o);
     }
     
     /**
@@ -62,13 +68,18 @@ public class Log {
     /**
      * Gives a String type list of entries separated by a 
      * newline character regardless of type or time.
-     * @return 
+     * @param timelimit A date object which gives the oldest log entry to print. 
+     * Example: dumpLog(new Date(System.currentTimeMillis() - 4 * 60 * 60 * 1000));
+     * This dumps all log entries that are newer than four hours old.
+     * @return A single concatenated String of string representations of each entry, separated by a new line.
      */
-    public static String dumpLog(){
+    public static String dumpLog(Date timelimit){
         String result = "------- LOG DUMP: -------\n";
         
         for (Entry e : completeLog) {
-            result = result.concat(e.stringEntry().concat(System.lineSeparator()));
+            if (e.getTime().after(timelimit)) {
+                result = result.concat(e.stringEntry().concat(System.lineSeparator()));
+            }
         }
         
         return result;
@@ -79,9 +90,8 @@ public class Log {
      * the console as a string if asked to.
      * @param type Type of log entry (info, severe, error, etc.)
      * @param o The object that makes up the main message part of the log entry.
-     * @param printToConsole Prints log entry to console if TRUE
      */
-    private static void addToLog(String type, Object o, boolean printToConsole){
+    private static void addToLog(String type, Object o){
         Entry logEntry = new Entry(new Date(), type, o);
         completeLog.add(logEntry);
         

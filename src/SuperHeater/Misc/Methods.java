@@ -44,14 +44,14 @@ public class Methods{
      * @return TRUE if target is reached. FALSE if not.
      */
     public static boolean isTargetReached(){
-        return (Consts.BAR_TARGET > 0 &&
-                Consts.CONFIG.get("barTargetEnabled").equals("TRUE") &&
-                Consts.BARS_MADE == Consts.BAR_TARGET);
+        return (Globals.BAR_TARGET > 0 &&
+                Globals.CONFIG.get("barTargetEnabled").equals("TRUE") &&
+                Globals.BARS_MADE == Globals.BAR_TARGET);
     }
     
     public static String getDistanceToTarget(){
-        if (Consts.BAR_TARGET > 0 && "TRUE".equals(Consts.CONFIG.get("barTargetEnabled"))) {
-            return Integer.toString(Consts.BAR_TARGET-Consts.BARS_MADE);
+        if (Globals.BAR_TARGET > 0 && "TRUE".equals(Globals.CONFIG.get("barTargetEnabled"))) {
+            return Integer.toString(Globals.BAR_TARGET-Globals.BARS_MADE);
         } else {
             return "N/A";
         }
@@ -66,19 +66,19 @@ public class Methods{
         //      Bars exceed the PWA (6 mith bars, 4 addy, 4 rune, et.)
         //      Banks for Natures as well. Should lead to REE.
         return(
-                (Inventory.getCount(Consts.NATURE_RUNE) < 1)                       ||
-                (Inventory.getCount(Consts.PRIMARY_ORE) < 1)                       ||
-                (Inventory.getCount(Consts.PRIMARY_ORE) > (getPWA(false)))         ||
-                (Inventory.getCount(Consts.SECONDARY_ORE) < (Consts.ACTIVE_ORE[1][1]))    ||
-                (Inventory.getCount(Consts.ACTIVE_ORE[2][0]) > getPWA(false))
+                (Inventory.getCount(Globals.NATURE_RUNE) < 1)                                            ||
+                (Inventory.getCount(Globals.PRIMARY_ORE) < 1)                                            ||
+                (Inventory.getCount(Globals.PRIMARY_ORE) > (getPWA(false)))                              ||
+                (Inventory.getCount(Globals.SECONDARY_ORE) < (Globals.ACTIVE_ORE.getSecondaryAmount()))   ||
+                (Inventory.getCount(Globals.ACTIVE_ORE.getBarID()) > getPWA(false))
                 );
     }
     public static boolean useCB(){
         
         return(
-                (Consts.CONFIG.get("useCB").equals("TRUE")) && 
-                (Inventory.getCount(Consts.COAL_BAG) > 0) && 
-                (Consts.SECONDARY_ORE == 453)
+                (Globals.CONFIG.get("useCB").equals("TRUE")) && 
+                (Inventory.getCount(Globals.COAL_BAG) > 0) && 
+                (Globals.SECONDARY_ORE == 453)
               );
         
     }
@@ -92,7 +92,7 @@ public class Methods{
     }
     
     public static int getPWA(boolean withdraw){
-        int amount = (int) Math.ceil(getTotalInventorySpaces()/(Consts.ACTIVE_ORE[0][1]+Consts.ACTIVE_ORE[1][1]));
+        int amount = (int) Math.ceil(getTotalInventorySpaces()/(Globals.ACTIVE_ORE.getPrimaryAmount()+Globals.ACTIVE_ORE.getSecondaryAmount()));
 
         if(withdraw == true && amount >= 27) {
             return 0;
@@ -102,7 +102,7 @@ public class Methods{
     }
 
     public static int getSWA(boolean withdraw){
-        int amount = Inventory.getCount(Consts.PRIMARY_ORE)*Consts.ACTIVE_ORE[1][1];
+        int amount = Inventory.getCount(Globals.PRIMARY_ORE)*Globals.ACTIVE_ORE.getSecondaryAmount();
         
         if(useCB()){
             amount -= 26;
@@ -117,8 +117,8 @@ public class Methods{
     }
 
     public static float getBarsPerHour(){
-        float secsRan = ((Consts.RUNTIME)/1000.0f);
-        return Math.round((float)Consts.BARS_MADE/(secsRan/3600.0f));
+        float secsRan = ((Globals.RUNTIME)/1000.0f);
+        return Math.round((float)Globals.BARS_MADE/(secsRan/3600.0f));
     }
 
     /**
@@ -130,12 +130,26 @@ public class Methods{
         return (Skills.getExperienceToLevel(skill, Skills.getLevel(skill)+1));
     }
 
-    public static long getBarsToNextLevel(int skill, int skillIndex){
-        return (getXpToNextLevel(skill)/Math.round(Consts.BARXP.get(Consts.CONFIG.get("barType"))[skillIndex]));
+    /**
+     * Returns the number of bars needed to get to the next level of the skill specified in the 
+     * argument. Example: long barsToNextLevel = getBarsToNextLevel(Skills.SMITHING);
+     * @param skill an integer representing a skill in the RSBOT API. Use: Skills.MAGIC or Skills.SMITHING
+     * @return a long integer that estimates the number of bars needed to reach the next level in the skill
+     * specified.
+     */
+    public static long getBarsToNextLevel(int skill){
+        if (skill == Skills.MAGIC) {
+            return (getXpToNextLevel(skill)/Math.round(Globals.BARXP.valueOf(Globals.CONFIG.get("barType")).getMagicXP()));
+        } else if (skill == Skills.SMITHING) {
+            return (getXpToNextLevel(skill)/Math.round(Globals.BARXP.valueOf(Globals.CONFIG.get("barType")).getSmithingXP()));
+        } else {
+            Log.error("Invalid call to Methods.getBarsToNextLevel. Only Magic and Smithing supported");
+            return 0;
+        }
     }
 
     public static double getSmithingXp(){
-        return (Consts.BARS_MADE*Consts.BARXP.get(Consts.CONFIG.get("barType"))[1]);
+        return (Globals.BARS_MADE*Globals.BARXP.valueOf(Globals.CONFIG.get("barType")).getSmithingXP());
     }
 
     public static Item[] reverseItemArray(Item[] a){
@@ -195,33 +209,33 @@ public class Methods{
         }
         
         // Deposit all unnoted bars in our inventory
-        while (Inventory.getCount(Consts.BARID) > 0) {
+        while (Inventory.getCount(Globals.BARID) > 0) {
             Log.info("Depositing Excess Primary Ore.");
-            Bank.deposit(Consts.BARID, Bank.Amount.ALL);
+            Bank.deposit(Globals.BARID, Bank.Amount.ALL);
             Task.sleep(Random.nextInt(20, 472));
         }
         
         // Find out how many bars we have
-        int totalBarCount = Bank.getItem(Consts.BARID).getWidgetChild().getChildStackSize();
+        int totalBarCount = Bank.getItem(Globals.BARID).getWidgetChild().getChildStackSize();
         
         // Get all the bars as notes
         Bank.setWithdrawNoted(true);
         
         // Try a max of 3 times to withdraw all bars while the 
         // inventory count is less than the total bar count
-        for (int i=0; (Inventory.getCount(Consts.BARID+1) < totalBarCount) && i < 3; i++) {
-             Bank.withdraw(Consts.BARID, Bank.Amount.ALL);
+        for (int i=0; (Inventory.getCount(Globals.BARID+1) < totalBarCount) && i < 3; i++) {
+             Bank.withdraw(Globals.BARID, Bank.Amount.ALL);
              Task.sleep(Random.nextInt(97, 424));
         }
         
-        Log.info("We have a total of: " + Inventory.getCount(Consts.BARID+1) + " Bars.");
+        Log.info("We have a total of: " + Inventory.getCount(Globals.BARID+1) + " Bars.");
         Log.info("We should have: " + totalBarCount);
         
         if (!Bank.close()) {
             Log.error("Could not close bank after withdrawing bars.");
         }
         
-        return (Inventory.getItem(Consts.BARID+1).getStackSize() >= totalBarCount);
+        return (Inventory.getItem(Globals.BARID+1).getStackSize() >= totalBarCount);
         
     }
     
@@ -234,7 +248,7 @@ public class Methods{
             return false;
         }
         
-        while (!GE.sell(Consts.BARID+1, Consts.CONFIG.get("barType").concat(" Bar"), price) && timer <= 4000) {
+        while (!GE.sell(Globals.BARID+1, Globals.CONFIG.get("barType").concat(" Bar"), price) && timer <= 4000) {
             timer += sellSleeper;
             Task.sleep(sellSleeper);
         }
@@ -247,31 +261,31 @@ public class Methods{
     public static void stopSuperHeater(){
         
         // If script has already been stopped once, return out.
-        if (Consts.STOPPED) {
+        if (Globals.STOPPED) {
             return;
         }
         
         Log.info("Stopping the script...");
         
         // Set strategy determinants to false to prevent infinite loops
-        Consts.GO           = false;
-        Consts.BANK_NOW     = false;
-        Consts.SHOW_PAINT   = false;
-        Consts.STOPPED      = true;
+        Globals.GO           = false;
+        Globals.BANK_NOW     = false;
+        Globals.SHOW_PAINT   = false;
+        Globals.STOPPED      = true;
         
         // Print info to console
         System.out.println("\n\n---------------------------------");
-        Log.info("Ran for: " + Time.format(Consts.RUNTIME));
-        Log.info("Bars made this session: " + Consts.BARS_MADE);
+        Log.info("Ran for: " + Time.format(Globals.RUNTIME));
+        Log.info("Bars made this session: " + Globals.BARS_MADE);
         Log.info("Bars / Hour:" + Methods.getBarsPerHour());
         System.out.println("---------------------------------\n\n"
                 + "Thanks for using the script.\n"
                 + "Be sure to suggest features and report bugs!\n\n");
         
         // Sell bars if asked to
-        if (Consts.CONFIG.get("sellBars").equals("TRUE")) {
+        if (Globals.CONFIG.get("sellBars").equals("TRUE")) {
             Log.info("Selling Bars as requested");
-            int price = Integer.decode(Consts.CONFIG.get("barPrice").toString());
+            int price = Integer.decode(Globals.CONFIG.get("barPrice").toString());
             sellBars(price);
             Log.info("Bars sold.");
         }
@@ -285,9 +299,9 @@ public class Methods{
 
         // Logout on stop if told to.
         for (   int i = 0;
-                Consts.CONFIG.get("stopAction").equals("logout") &&
+                Globals.CONFIG.get("stopAction").equals("LOGOUT") &&
                 Game.isLoggedIn() &&
-                i < Integer.parseInt(Consts.CONFIG.get("retries"));
+                i < Integer.parseInt(Globals.CONFIG.get("retries"));
                 i++
              ){
             Log.severe("Logging out...");

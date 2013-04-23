@@ -1,6 +1,6 @@
 package SuperHeater.GUI;
 
-import SuperHeater.Misc.Consts;
+import SuperHeater.Misc.Globals;
 import SuperHeater.Misc.Logging.Log;
 import SuperHeater.Misc.Methods;
 import java.awt.AlphaComposite;
@@ -22,7 +22,6 @@ public class Painter {
     
     private static Image BGIMG;
     private static Image MENUBG;
-    private static boolean MOUSE_PRESSED = false;
     
     /**
      * Gets and draws the background image if possible. 
@@ -52,18 +51,18 @@ public class Painter {
         
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1.0f));
         g2d.setColor(new Color(228, 202, 31));
-        g2d.drawString("Version: " + Consts.VERSION, 15, 425);
-        g2d.drawString("Making: " + Consts.CONFIG.get("barType") + " Bars", 70, 455);
-        g2d.drawString("Status: " + Consts.CURRENT_STATUS, 255, 455);
-        g2d.drawString("Ran for: "+ Time.format(Consts.RUNTIME), 70, 470);
-        g2d.drawString("Bars made this session: " + Consts.BARS_MADE, 70,485);
+        g2d.drawString("Version: " + Globals.VERSION, 15, 425);
+        g2d.drawString("Making: " + Globals.CONFIG.get("barType") + " Bars", 70, 455);
+        g2d.drawString("Status: " + Globals.CURRENT_STATUS, 255, 455);
+        g2d.drawString("Ran for: "+ Time.format(Globals.RUNTIME), 70, 470);
+        g2d.drawString("Bars made this session: " + Globals.BARS_MADE, 70,485);
         g2d.drawString("Remaining until target: " + (Methods.getDistanceToTarget()), 255,485);
-        g2d.drawString("Magic XP Gained: " + (Consts.BARS_MADE*53) + " xp", 70, 500);
+        g2d.drawString("Magic XP Gained: " + (Globals.BARS_MADE*53) + " xp", 70, 500);
         g2d.drawString("Until Level "
                 + (Skills.getLevel(Skills.MAGIC)+1) + ": "
                 + Methods.getXpToNextLevel(Skills.MAGIC)
                 + "xp ("
-                + Methods.getBarsToNextLevel(Skills.MAGIC, 0)
+                + Methods.getBarsToNextLevel(Skills.MAGIC)
                 + " Bars)", 255, 500);
 
         g2d.drawString("Smithing XP Gained: "
@@ -73,7 +72,7 @@ public class Painter {
                 + (Skills.getLevel(Skills.SMITHING)+1) + ": "
                 + Methods.getXpToNextLevel(Skills.SMITHING)
                 + "xp ("
-                + Methods.getBarsToNextLevel(Skills.SMITHING, 1)
+                + Methods.getBarsToNextLevel(Skills.SMITHING)
                 + " Bars)", 255, 515);
         
         g2d.drawString("Bars / Hour: " + Methods.getBarsPerHour(), 70,530);
@@ -86,13 +85,8 @@ public class Painter {
      */
     public static void drawMouse(Graphics2D g2d){
         g2d.setColor(Color.RED);
+        g2d.drawOval((Mouse.getX()-7), (Mouse.getY()-7), 14, 14);
         
-        if (MOUSE_PRESSED) {
-            g2d.fillOval((Mouse.getX()-7), (Mouse.getY()-7), 14, 14);
-        } else {
-            g2d.drawOval((Mouse.getX()-7), (Mouse.getY()-7), 14, 14);
-        }
-
         g2d.setColor(Color.GREEN);
         g2d.fillOval((Mouse.getX()-2), (Mouse.getY()-2), 4, 4);
     }
@@ -203,14 +197,4 @@ public class Painter {
             }
         }
     } 
-    
-    /**
-     * MOUSE_PRESSED is a flag that indicates when the mouse button 
-     * is depressed. Used in drawing different symbols for the mouse
-     * pointer when this is the case.
-     * @param pressed TRUE or FALSE
-     */
-    public static void setMousePressed(boolean pressed) {
-        MOUSE_PRESSED = pressed;
-    }
 }

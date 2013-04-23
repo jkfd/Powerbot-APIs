@@ -1,6 +1,6 @@
 package SuperHeater.GUI;
 
-import SuperHeater.Misc.Consts;
+import SuperHeater.Misc.Globals;
 import SuperHeater.Misc.Logging.Log;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -59,35 +59,35 @@ public class GUI {
         
         CBButtons.put("CBYes", new Button(
                 "https://i.minus.com/ibs9UyzwzjkrW4.png", "CBYes", 
-                20, 20, 140, 445, ClickAction.CB_YES, true, Consts.CONFIG.get("useCB").equals("TRUE")));
+                20, 20, 140, 445, ClickAction.CB_YES, true, Globals.CONFIG.get("useCB").equals("TRUE")));
         
         CBButtons.put("CBNo", new Button(
                 "https://i.minus.com/i59bVziKkYXaV.png", "CBNo", 
-                20, 20, 160, 445, ClickAction.CB_NO, true, Consts.CONFIG.get("useCB").equals("FALSE")));
+                20, 20, 160, 445, ClickAction.CB_NO, true, Globals.CONFIG.get("useCB").equals("FALSE")));
         
         targetButtons.put("targetYes", new Button(
                 "https://i.minus.com/ibs9UyzwzjkrW4.png", "targetYes", 
-                20, 20, 140, 472, ClickAction.TA_YES, true, Consts.CONFIG.get("barTargetEnabled").equals("TRUE")));
+                20, 20, 140, 472, ClickAction.TA_YES, true, Globals.CONFIG.get("barTargetEnabled").equals("TRUE")));
         
         targetButtons.put("targetNo", new Button(
                 "https://i.minus.com/i59bVziKkYXaV.png", "targetNo", 
-                20, 20, 160, 472, ClickAction.TA_NO, true, Consts.CONFIG.get("barTargetEnabled").equals("FALSE")));
+                20, 20, 160, 472, ClickAction.TA_NO, true, Globals.CONFIG.get("barTargetEnabled").equals("FALSE")));
         
         logoutButtons.put("logoutYes", new Button(
                 "https://i.minus.com/ibs9UyzwzjkrW4.png", "logoutYes", 
-                20, 20, 290, 445, ClickAction.LO_YES, true, Consts.CONFIG.get("stopAction").equals("logout")));
+                20, 20, 290, 445, ClickAction.LO_YES, true, Globals.CONFIG.get("stopAction").equals("logout")));
         
         logoutButtons.put("logoutNo", new Button(
                 "https://i.minus.com/i59bVziKkYXaV.png", "logoutNo", 
-                20, 20, 310, 445, ClickAction.LO_NO, true, !Consts.CONFIG.get("stopAction").equals("logout")));
+                20, 20, 310, 445, ClickAction.LO_NO, true, !Globals.CONFIG.get("stopAction").equals("logout")));
         
         GEButtons.put("GEYes", new Button(
                 "https://i.minus.com/ibs9UyzwzjkrW4.png", "GEYes", 
-                20, 20, 470, 445, ClickAction.GE_YES, true, Consts.CONFIG.get("sellBars").equals("TRUE")));
+                20, 20, 470, 445, ClickAction.GE_YES, true, Globals.CONFIG.get("sellBars").equals("TRUE")));
         
         GEButtons.put("GENo", new Button(
                 "https://i.minus.com/i59bVziKkYXaV.png", "GENo", 
-                20, 20, 490, 445, ClickAction.GE_NO, true, Consts.CONFIG.get("sellBars").equals("FALSE")));
+                20, 20, 490, 445, ClickAction.GE_NO, true, Globals.CONFIG.get("sellBars").equals("FALSE")));
         
         GEButtons.put("GEPrice", new Button(
                 "https://i.minus.com/ibc5H3DhHgpA01.png", "GEPrice", 
@@ -95,35 +95,35 @@ public class GUI {
         
         barButtons.put("Bronze", new Button(
                 "https://i.minus.com/ibnxSOtmgUqkpx.gif", "Bronze", 
-                33, 33, 0, 520, ClickAction.BAR_SELECT, true, Consts.CONFIG.get("barType").equals("Bronze")));
+                33, 33, 0, 520, ClickAction.BAR_SELECT, true, Globals.CONFIG.get("barType").equals("BRONZE")));
         
         barButtons.put("Iron", new Button(
                 "https://i.minus.com/ib2jhXk8eHiS0E.gif", "Iron", 
-                33, 33, 0, 520, ClickAction.BAR_SELECT, true, Consts.CONFIG.get("barType").equals("Iron")));
+                33, 33, 0, 520, ClickAction.BAR_SELECT, true, Globals.CONFIG.get("barType").equals("IRON")));
         
         barButtons.put("Silver", new Button(
                 "https://i.minus.com/ikgPVMVZnLMZL.gif", "Silver", 
-                33, 33, 0, 520, ClickAction.BAR_SELECT, true, Consts.CONFIG.get("barType").equals("Silver")));
+                33, 33, 0, 520, ClickAction.BAR_SELECT, true, Globals.CONFIG.get("barType").equals("SILVER")));
         
         barButtons.put("Steel", new Button(
                 "https://i.minus.com/ic5oU6LlbiSDg.gif", "Steel", 
-                33, 33, 0, 520, ClickAction.BAR_SELECT, true, Consts.CONFIG.get("barType").equals("Steel")));
+                33, 33, 0, 520, ClickAction.BAR_SELECT, true, Globals.CONFIG.get("barType").equals("STEEL")));
         
         barButtons.put("Gold", new Button(
                 "https://i.minus.com/iFdcm56Xjue0x.gif", "Gold", 
-                33, 33, 0, 520, ClickAction.BAR_SELECT, true, Consts.CONFIG.get("barType").equals("Gold")));
+                33, 33, 0, 520, ClickAction.BAR_SELECT, true, Globals.CONFIG.get("barType").equals("GOLD")));
         
         barButtons.put("Mithril", new Button(
                 "https://i.minus.com/iwDB3Unb1Zv8L.gif", "Mithirl", 
-                33, 33, 0, 520, ClickAction.BAR_SELECT, true, Consts.CONFIG.get("barType").equals("Mithril")));
+                33, 33, 0, 520, ClickAction.BAR_SELECT, true, Globals.CONFIG.get("barType").equals("MITHRIL")));
         
         barButtons.put("Adamantite", new Button(
                 "https://i.minus.com/ib2qa1QrlUPaYQ.gif", "Adamantite", 
-                33, 33, 0, 520, ClickAction.BAR_SELECT, true, Consts.CONFIG.get("barType").equals("Adamantite")));
+                33, 33, 0, 520, ClickAction.BAR_SELECT, true, Globals.CONFIG.get("barType").equals("ADAMANTITE")));
         
         barButtons.put("Runite", new Button(
                 "https://i.minus.com/iI5hNjQyrfCsF.gif", "Runite", 
-                33, 33, 247, 520, ClickAction.BAR_SELECT, true, Consts.CONFIG.get("barType").equals("Runite")));
+                33, 33, 247, 520, ClickAction.BAR_SELECT, true, Globals.CONFIG.get("barType").equals("RUNITE")));
         
         stopGoButtons.put("Start", new Button(
                 "https://i.minus.com/ibbbYlblkqsTfo.png", "Start", 
@@ -134,11 +134,11 @@ public class GUI {
                 37, 72, 430, 520, ClickAction.SCRIPT_STOP, false, false));
         
         textFields.put("TargetInput", new TextField(
-                "https://i.minus.com/jIK4eYBV54HEi.png", "TargetInput", String.valueOf(Consts.BAR_TARGET), 
+                "https://i.minus.com/jIK4eYBV54HEi.png", "TargetInput", String.valueOf(Globals.BAR_TARGET), 
                 " Bars", true, 30, 100, 190, 467, 0, true, false));
         
         textFields.put("PriceInput", new TextField(
-                "https://i.minus.com/jIK4eYBV54HEi.png", "PriceInput", String.valueOf(Consts.SELLING_PRICE), 
+                "https://i.minus.com/jIK4eYBV54HEi.png", "PriceInput", String.valueOf(Globals.SELLING_PRICE), 
                 " Gp", true, 30, 100, 360, 467, 0, true, false));
         
         sortButtonRow(50);
