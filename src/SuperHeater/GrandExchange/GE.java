@@ -23,13 +23,13 @@ public class GE {
     public final static int ACTION_SELL = 1;
     public final static Map<Integer, Integer[]> SLOTS = new HashMap<Integer, Integer[]>(); // <(1,2) , {buy,sell}>
     // Private Constants
-    private final static Widget WC = new Widget(105);      // WC = WIDGET CONTAINER
-    private final static WidgetChild WC_MAIN = new Widget(105).getChild(1);
-    private final static WidgetChild WC_CLOSE = new Widget(105).getChild(14);
-    private final static WidgetChild TITLEBAR = new Widget(105).getChild(134);
-    private final static WidgetChild WC_ITEM_CHOSEN = new Widget(105).getChild(142);
-    private final static WidgetChild WC_CONFIRM = new Widget(105).getChild(187);
-    private final static WidgetChild WC_SELL_INVENTORY = new Widget(107).getChild(18);
+    private final static Widget WC                      = new Widget(105);      // WC = WIDGET CONTAINER
+    private final static WidgetChild WC_MAIN            = new Widget(105).getChild(1);
+    private final static WidgetChild WC_CLOSE           = new Widget(105).getChild(14);
+    private final static WidgetChild TITLEBAR           = new Widget(105).getChild(134);
+    private final static WidgetChild WC_ITEM_CHOSEN     = new Widget(105).getChild(142);
+    private final static WidgetChild WC_CONFIRM         = new Widget(105).getChild(187);
+    private final static WidgetChild WC_SELL_INVENTORY  = new Widget(107).getChild(18);
     // A list of FOUR (4) IDs that correspond to GE clerks.
     private final static Set<Integer> CLERKS = new HashSet<Integer>(Arrays.asList(
             new Integer[]{1419, 2240, 2241, 2593}));

@@ -156,6 +156,7 @@ public class Banker extends Node{
                 WidgetChild bankItemWC = bankItem.getWidgetChild();
 
                 int amount =  bankItemWC.getChildStackSize();
+                Log.info("Amount of item " + bankItem.getId() + "found = " + amount);
                 return amount;
             }
             return 0;

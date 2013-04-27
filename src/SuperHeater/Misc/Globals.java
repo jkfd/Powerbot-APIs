@@ -71,7 +71,7 @@ public class Globals {
         STEEL       (440,1, 453,2,  2353, 2354),
         MITHRIL     (447,1, 453,4,  2359, 2360),
         ADAMANTITE  (449,1, 453,6,  2361, 2362),
-        RNITE       (451,1, 453,8,  2363, 2364);
+        RUNITE      (451,1, 453,8,  2363, 2364);
         
         private int pid; 
         private int pam; 

@@ -40,8 +40,10 @@ import org.powerbot.game.client.Client;
 
 @Manifest(  authors = { "jkfd" },
             name = "F2PSuperHeater",
-            description = "Simply the best.",
+            description = "SET INPUT TO 'BLOCK' BEFORE TYPING IN PAINT \nHandles everything for you. "
+                        + "Just wield a firestaff and have your nats!",
             version = 1.61,
+            topic   = 11761326,
             website = "https://www.powerbot.org/community/topic/964475-beta-f2p-superheater-free/")
 
 public class SuperHeater extends ActiveScript implements PaintListener, MouseListener, KeyListener
@@ -220,11 +222,18 @@ public class SuperHeater extends ActiveScript implements PaintListener, MouseLis
                         component.setSelected(true);
                         Globals.CONFIG.put("barType", k.toUpperCase());
                         
+                        Log.info("barType" + k.toUpperCase());
+                        
                         // Shortcut relevant hashMap entries
                         Globals.ACTIVE_ORE      = Globals.BARREQ.valueOf(Globals.CONFIG.get("barType"));
                         Globals.PRIMARY_ORE     = Globals.ACTIVE_ORE.getPrimaryID();
                         Globals.SECONDARY_ORE   = Globals.ACTIVE_ORE.getSecondaryID();
                         Globals.BARID           = Globals.ACTIVE_ORE.getBarID();
+                        
+                        Log.info("ACT:" + Globals.ACTIVE_ORE.toString() + " - " + Globals.BARREQ.valueOf(Globals.CONFIG.get("barType")).toString());
+                        Log.info("PRI:" + Globals.PRIMARY_ORE + " - " + Globals.ACTIVE_ORE.getPrimaryID());
+                        Log.info("SEC:" + Globals.SECONDARY_ORE + " - " + Globals.ACTIVE_ORE.getSecondaryID());
+                        Log.info("BAR:" + Globals.BARID + " - " + Globals.ACTIVE_ORE.getBarID());
                         break;
                     case 7:
                         // Set Config to use coal bag
